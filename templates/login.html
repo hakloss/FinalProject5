@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <link href="../scheduler/static/scheduler/style.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<img class="hero" src="../scheduler/static/scheduler/img/calendar2.png" width="300px">
+<div class="bar">
+    <h1 class="title">TA Scheduling</h1>
+</div>
+
+<form action="/" method="post" class="centerlogin">
+    {% csrf_token %}
+    <label for="user">Username:</label><br/>
+    <input type="text" id="user" name="user"><br/><br/>
+    <label for="password">Password:</label><br/>
+    <input type="text" id="password" name="password" ><br/><br/>
+    <input type="submit" value="Login">
+</form>
+{{ invalidmsg }}
+</body>
+</html>
