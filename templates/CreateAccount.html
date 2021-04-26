@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Create Account</title>
-    <link rel="stylesheet" type="text/css" href="{% static 'scheduler/style.css' %} />
+    <link rel="stylesheet" type="text/css" href="{% static 'scheduler/style.css' %}" />
 </head>
 <body>
 <img class="hero" src="{% static 'img/calendar2.png' %}" width="300px">
@@ -16,7 +16,7 @@
 
 
 <div class="row">
-    <form action="/" method="post" class="accountform">
+    <form action="/CreateAccount/" method="post" class="accountform">
         {% csrf_token %}
         <div class="columnleft"><label for="fname">First name:</label><br/>
             <input type="text" id="fname" name="fname" required><br/><br/>

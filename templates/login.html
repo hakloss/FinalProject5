@@ -1,12 +1,13 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Login</title>
-    <link href="../scheduler/static/scheduler/style.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="{% static 'scheduler/style.css' %}" />
 </head>
 <body>
-<img class="hero" src="../scheduler/static/scheduler/img/calendar2.png" width="300px">
+<img class="hero" src="{% static 'img/calendar2.png' %}">
 <div class="bar">
     <h1 class="title">TA Scheduling</h1>
 </div>

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Create Course</title>
-    <link rel="stylesheet" type="text/css" href="{% static 'scheduler/style.css' %} />
+    <link rel="stylesheet" type="text/css" href="{% static 'scheduler/style.css' %}" />
 </head>
 <body>
 <img class="hero" src="{% static 'img/calendar2.png' %}" width="300px">
@@ -15,7 +15,7 @@
 <p class="homelink"><a href="/">Home</a></p>
 
 <div class="row">
-    <form action="/" method="post" class="accountform">
+    <form action="/CreateCourse/" method="post" class="accountform">
         {% csrf_token %}
         <div class="columnleft">
             <label for="course">Course:</label><br/>
