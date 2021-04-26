@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Create Account</title>
-    <link rel="stylesheet" type="text/css" href="{% static 'scheduler/style.css' %} />
+    <link rel="stylesheet" type="text/css" href="{% static 'scheduler/style.css' %}" />
 </head>
 <body>
 <img class="hero" src="{% static 'img/calendar2.png' %}" width="300px">
@@ -16,7 +16,7 @@
 
 
 <div class="row">
-    <form action="/" method="post" class="accountform">
+    <form action="/CreateAccount/" method="post" class="accountform">
         {% csrf_token %}
         <div class="columnleft"><label for="fname">First name:</label><br/>
             <input type="text" id="fname" name="fname" required><br/><br/>
@@ -24,7 +24,7 @@
             <label for="lname">Last name:</label><br/>
             <input type="text" id="lname" name="lname" required><br/><br/>
 
-          {% comment %}  <label for="email">Email:</label><br/>
+            <label for="email">Email:</label><br/>
             <input type="text" id="email" name="email" required><br/><br/>
 
             <label for="password">Password:</label><br/>
@@ -104,12 +104,14 @@
             <input type="text" id="pphone" name="pphone" ><br/><br/>
 
             <label for="wphone">Work phone number:</label><br/>
-            <input type="text" id="wphone" name="wphone" ><br/><br/>{% endcomment %}
+            <input type="text" id="wphone" name="wphone" ><br/><br/>
 
-            <input type="submit" value="Create">
+            <input type="submit" value="Create"><br/>
+            <div class="successmsg">{{ successmsg }}</div>
+            <div class="badmsg">{{ badmsg }}</div>
         </div>
     </form>
-    {{ successmsg }}
+
 </div>
 
 </body>

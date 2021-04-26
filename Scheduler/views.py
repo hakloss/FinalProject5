@@ -1,9 +1,7 @@
-from django.shortcuts import render
-
-# Create your views here.
+from django.shortcuts import render, redirect
 from django.views import View
 from Scheduler.models import *
-
+# Create your views here.
 class CreateAccount(View):
     def get(self, request):
         return render(request, "CreateAccount.html")
@@ -11,11 +9,24 @@ class CreateAccount(View):
     def post(self, request):
         xfname = request.POST.get('fname')
         xlname = request.POST.get('lname')
+        xemail = request.POST.get('email')
+        xpassword = request.POST.get('password')
+        xrole = request.POST.get('role')
+        xaddress = request.POST.get('address')
+        xcity = request.POST.get('city')
+        xstate = request.POST.get('state')
+        xzip = request.POST.get('zip')
+        xpphone = request.POST.get('pphone')
+        xwphone = request.POST.get('wphone')
+        try:
+            account = user(fname=xfname, lname=xlname, email=xemail, password=xpassword, role=xrole,
+                       address=xaddress, city=xcity, state=xstate, zip=xzip, pphone=xpphone, wphone=xwphone)
+            account.save()
 
-        account = user(fname=xfname, lname=xlname)
-        account.save()
+            return render(request, "CreateAccount.html", {"successmsg":"Account has been created"})
+        except ValueError:
+            return render(request, "CreateAccount.html", {"badmsg": "Please enter a valid email"})
 
-        return render(request, "CreateAccount.html",{"fname": user, "lname": user})
 
 class Home(View):
     def get(self, request):
@@ -29,11 +40,38 @@ class Login(View):
         return render(request, "Login.html")
 
     def post(self, request):
-        return render(request, "Login.html")
+        badPassword = False
+        try:
+            myuser = user.objects.get(email=request.POST["username"])
+            badPassword = (myuser.password != request.POST['password'])
+        except:
+            return render(request, "Login.html", {"badmsg": "Please enter a valid username"})
+        if badPassword:
+            return render(request, "Login.html", {"badmsg": "Please enter a valid password"})
+        else:
+            request.session["username"] = myuser.email
+            return redirect("/")
+
 
 class CreateCourse(View):
     def get(self, request):
         return render(request, "CreateCourse.html")
 
     def post(self, request):
-        return render(request, "CreateCourse.html")
+        xclassname = request.POST.get('classname')
+        xsection = request.POST.get('section')
+
+        try:
+            xcourse = course(classname=xclassname, section=xsection)
+            xcourse.save()
+            return render(request, "CreateCourse.html", {"successmsg": "Course has been created"})
+        except:
+            return render(request, "CreateCourse.html", {"badmsg": "Please enter an integer for course"})
+
+class ViewAccounts(View):
+    def get(self, request):
+        allaccounts = user.objects.all()
+        return render(request, "ViewAccounts.html", {'obj':allaccounts})
+
+    def post(self, request):
+        return render(request, "ViewAccounts.html")

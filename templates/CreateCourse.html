@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Create Course</title>
-    <link rel="stylesheet" type="text/css" href="{% static 'scheduler/style.css' %} />
+    <link rel="stylesheet" type="text/css" href="{% static 'scheduler/style.css' %}" />
 </head>
 <body>
 <img class="hero" src="{% static 'img/calendar2.png' %}" width="300px">
@@ -15,11 +15,11 @@
 <p class="homelink"><a href="/">Home</a></p>
 
 <div class="row">
-    <form action="/" method="post" class="accountform">
+    <form action="/CreateCourse/" method="post" class="accountform">
         {% csrf_token %}
         <div class="columnleft">
-            <label for="course">Course:</label><br/>
-            <input type="text" id="course" name="course" required><br/><br/>
+            <label for="classname">Course:</label><br/>
+            <input type="text" id="classname" name="classname" required><br/><br/>
 
         </div>
         <div class="columnright">
@@ -27,7 +27,9 @@
             <input type="text" id="section" name="section" required><br/><br/>
 
 
-            <input type="submit" value="Create">
+            <input type="submit" value="Create"><br/>
+            <div class="successmsg">{{ successmsg }}</div>
+            <div class="badmsg">{{ badmsg }}</div>
         </div>
     </form>
 </div>
