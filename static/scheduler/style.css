@@ -107,3 +107,8 @@ input[type=submit]{
   display: table;
   clear: both;
 }
+
+.successmsg{
+    color: #5eb357;
+    text-align: center;
+}

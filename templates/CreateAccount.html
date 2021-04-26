@@ -24,7 +24,7 @@
             <label for="lname">Last name:</label><br/>
             <input type="text" id="lname" name="lname" required><br/><br/>
 
-          {% comment %}  <label for="email">Email:</label><br/>
+            <label for="email">Email:</label><br/>
             <input type="text" id="email" name="email" required><br/><br/>
 
             <label for="password">Password:</label><br/>
@@ -104,12 +104,13 @@
             <input type="text" id="pphone" name="pphone" ><br/><br/>
 
             <label for="wphone">Work phone number:</label><br/>
-            <input type="text" id="wphone" name="wphone" ><br/><br/>{% endcomment %}
+            <input type="text" id="wphone" name="wphone" ><br/><br/>
 
-            <input type="submit" value="Create">
+            <input type="submit" value="Create"><br/>
+            <div class="successmsg">{{ successmsg }}</div>
         </div>
     </form>
-    {{ successmsg }}
+
 </div>
 
 </body>
