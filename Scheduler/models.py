@@ -11,8 +11,8 @@ class user(models.Model):
     city = models.CharField(max_length=40, default='empty')
     state = models.CharField(max_length=2, default='em')
     zip = models.CharField(max_length=5, default='empty')
-    pphone = models.CharField(max_length=5, default='empty')
-    wphone = models.CharField(max_length=5, default='empty')
+    pphone = models.CharField(max_length=12, default='empty')
+    wphone = models.CharField(max_length=12, default='empty')
 
 class course(models.Model):
     classname = models.CharField(max_length=30, default='empty')

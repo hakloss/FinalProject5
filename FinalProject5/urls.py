@@ -16,7 +16,7 @@ Including another URLconf
 from django.conf.urls import url
 from django.contrib import admin
 from django.urls import path
-from Scheduler.views import Home, Login, CreateAccount, CreateCourse
+from Scheduler.views import *
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -24,4 +24,5 @@ urlpatterns = [
     path('login/', Login.as_view()),
     path('CreateAccount/', CreateAccount.as_view()),
     path('CreateCourse/', CreateCourse.as_view()),
+    path('ViewAccounts/', ViewAccounts.as_view()),
 ]

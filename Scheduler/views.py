@@ -67,3 +67,11 @@ class CreateCourse(View):
             return render(request, "CreateCourse.html", {"successmsg": "Course has been created"})
         except:
             return render(request, "CreateCourse.html", {"badmsg": "Please enter an integer for course"})
+
+class ViewAccounts(View):
+    def get(self, request):
+        allaccounts = user.objects.all()
+        return render(request, "ViewAccounts.html", {'obj':allaccounts})
+
+    def post(self, request):
+        return render(request, "ViewAccounts.html")
