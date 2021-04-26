@@ -44,4 +44,12 @@ class CreateCourse(View):
         return render(request, "CreateCourse.html")
 
     def post(self, request):
-        return render(request, "CreateCourse.html")
+        xclassname = request.POST.get('classname')
+        xsection = request.POST.get('section')
+
+        try:
+            xcourse = course(classname=xclassname, section=xsection)
+            xcourse.save()
+            return render(request, "CreateCourse.html", {"successmsg": "Course has been created"})
+        except ValueError:
+            return render(request, "CreateCourse.html", {"badmsg": "Please enter an integer for course"})

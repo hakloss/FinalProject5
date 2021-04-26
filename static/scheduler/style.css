@@ -112,3 +112,8 @@ input[type=submit]{
     color: #5eb357;
     text-align: center;
 }
+
+.badmsg{
+    color: #d64127;
+    text-align: center;
+}
