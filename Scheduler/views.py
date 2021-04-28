@@ -44,6 +44,7 @@ class Home(View):
 
 class Login(View):
     def get(self, request):
+        m = request.session["username"]
         return render(request, "Login.html")
 
     def post(self, request):
@@ -57,7 +58,6 @@ class Login(View):
             return render(request, "Login.html", {"badmsg": "Please enter a valid password"})
         else:
             request.session["username"] = myuser.email
-            print("hello")
             return redirect("/Home")
 
 
