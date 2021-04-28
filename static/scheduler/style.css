@@ -70,7 +70,7 @@ td, th, thead{
     width: 80%;
 }
 
-input[type=text], select{
+input[type=text],[type=password], select{
     width: 100%;
     padding: 12px 20px;
     margin: 8px 0;

@@ -1,6 +1,10 @@
 from django.shortcuts import render, redirect
 from django.views import View
+
+from Scheduler import functions
+from Scheduler.functions import *
 from Scheduler.models import *
+
 # Create your views here.
 class CreateAccount(View):
     def get(self, request):
@@ -18,6 +22,9 @@ class CreateAccount(View):
         xzip = request.POST.get('zip')
         xpphone = request.POST.get('pphone')
         xwphone = request.POST.get('wphone')
+
+        if functions.duplicateUserCheck(xemail):
+            return render(request, "CreateAccount.html", {"badmsg": "An account for this email already exists"})
         try:
             account = user(fname=xfname, lname=xlname, email=xemail, password=xpassword, role=xrole,
                        address=xaddress, city=xcity, state=xstate, zip=xzip, pphone=xpphone, wphone=xwphone)
@@ -60,7 +67,8 @@ class CreateCourse(View):
 
     def post(self, request):
         xclassname = request.POST.get('classname')
-
+        if functions.duplicateCourseCheck(xclassname):
+            return render(request, "CreateCourse.html", {"badmsg": "This course already exists"})
         try:
             xcourse = course(classname=xclassname)
             return render(request, "CreateCourse.html", {"badmsg": "Please enter a unique course name"})
@@ -79,16 +87,23 @@ class AddSection(View):
         return render(request, "AddSection.html")
 
     def post(self, request):
-        xsectionnum = request.POST.get('section_number')
-        xsectiontime = request.POST.get('section_time')
 
+        xcourse = request.POST.get('course')
+        xsectionnum = request.POST.get('number')
+        print(xsectionnum)
+        xsectiontime = request.POST.get('time')
+        print(xsectiontime)
+
+
+        if functions.duplicateSectionCheck(xsectionnum,xsectiontime,xcourse):
+            return render(request, "CreateCourse.html", {"badmsg": "This course already exists"})
         try:
             xcourse = course.objects.get(classname=request.POST.get('classname'))
             xsection = section(time=xsectiontime, number=xsectionnum, course=xcourse)
             xsection.save()
-            return render(request, "AddSection.html", {"successmsg": "section has been added"})
+            return render(request, "AddSection.html", {"successmsg": "Section has been added"})
         except:
-            return render(request, "AddSection.html", {"badmsg": "section has not been added"})
+            return render(request, "AddSection.html", {"badmsg": "Section has not been added"})
 
 class ViewAccounts(View):
     def get(self, request):

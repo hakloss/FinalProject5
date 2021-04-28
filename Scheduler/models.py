@@ -15,10 +15,10 @@ class user(models.Model):
     wphone = models.CharField(max_length=12, default='empty')
 
 class course(models.Model):
-    classname = models.CharField(max_length=30, default='empty')
+    classname = models.CharField(max_length=30, default='empty', null=True)
     #section = models.IntegerField(default='empty')
 
 class section(models.Model):
-    number = models.IntegerField(default='empty')
-    time = models.CharField(max_length=40, default='empty')
-    course = models.ForeignKey(course, on_delete=models.CASCADE, blank=False)
+    number = models.CharField(max_length=30, default='empty',null=True, blank=True)
+    time = models.CharField(max_length=40, default='empty',null=True, blank=True)
+    course = models.ForeignKey(course, on_delete=models.CASCADE, blank=False, null=True)
