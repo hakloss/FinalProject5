@@ -16,4 +16,9 @@ class user(models.Model):
 
 class course(models.Model):
     classname = models.CharField(max_length=30, default='empty')
-    section = models.IntegerField(default='empty')
+    #section = models.IntegerField(default='empty')
+
+class section(models.Model):
+    number = models.IntegerField(default='empty')
+    time = models.CharField(max_length=40, default='empty')
+    course = models.ForeignKey(course, on_delete=models.CASCADE, blank=False)
