@@ -1,0 +1,39 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add Section</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'scheduler/style.css' %}" />
+</head>
+<body>
+<img class="hero" src="{% static 'img/calendar2.png' %}" width="300px">
+<div class="bar">
+    <h1 class="title">TA Scheduling</h1>
+
+</div>
+<p class="homelink"><a href="/">Home</a></p>
+
+<div class="row">
+    <form action="/AddSection/" method="post" class="accountform">
+        {% csrf_token %}
+        <div class="columnleft">
+            <label for="classname">Course:</label><br/>
+            <input type="text" id="classname" name="classname" required><br/><br/>
+
+        </div>
+        <div class="columnright">
+            <label for="section_number">Section:</label><br/>
+            <input type="text" id="section_number" name="section_number" required><br/><br/>
+
+            <label for="section_time">Time:</label><br/>
+            <input type="text" id="section_time" name="section_time" required><br/><br/>
+
+            <input type="submit" value="Create"><br/>
+            <div class="successmsg">{{ successmsg }}</div>
+            <div class="badmsg">{{ badmsg }}</div>
+        </div>
+    </form>
+</div>
+</body>
+</html>
