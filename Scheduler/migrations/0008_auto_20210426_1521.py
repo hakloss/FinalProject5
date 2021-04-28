@@ -15,9 +15,5 @@ class Migration(migrations.Migration):
             old_name='course',
             new_name='classname',
         ),
-        migrations.AlterField(
-            model_name='course',
-            name='section',
-            field=models.IntegerField(default='empty'),
-        ),
+
     ]

@@ -25,4 +25,5 @@ urlpatterns = [
     path('CreateAccount/', CreateAccount.as_view()),
     path('CreateCourse/', CreateCourse.as_view()),
     path('ViewAccounts/', ViewAccounts.as_view()),
+    path('AddSection/', AddSection.as_view()),
 ]

@@ -15,7 +15,6 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('course', models.CharField(default='empty', max_length=30)),
-                ('section', models.IntegerField(default='empty', max_length=3)),
             ],
         ),
         migrations.AlterField(
