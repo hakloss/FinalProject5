@@ -63,6 +63,12 @@ class CreateCourse(View):
 
         try:
             xcourse = course(classname=xclassname)
+            return render(request, "CreateCourse.html", {"badmsg": "Please enter a unique course name"})
+        except:
+            pass
+
+        try:
+            xcourse = course(classname=xclassname)
             xcourse.save()
             return render(request, "CreateCourse.html", {"successmsg": "Course has been created"})
         except:
@@ -73,13 +79,11 @@ class AddSection(View):
         return render(request, "AddSection.html")
 
     def post(self, request):
-        xcourse = course.objects.get(classname=request.POST.get('classname'))
         xsectionnum = request.POST.get('section_number')
-        print(xsectionnum)
         xsectiontime = request.POST.get('section_time')
-        print(xsectiontime)
 
         try:
+            xcourse = course.objects.get(classname=request.POST.get('classname'))
             xsection = section(time=xsectiontime, number=xsectionnum, course=xcourse)
             xsection.save()
             return render(request, "AddSection.html", {"successmsg": "section has been added"})
