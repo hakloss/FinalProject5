@@ -15,14 +15,24 @@
 <p class="homelink"><a href="/">Home</a></p>
 
 <div class="row">
-    <form action="/CreateCourse/" method="post" class="centerlogin">
+    <form action="/AddSection/" method="post" class="accountform">
         {% csrf_token %}
+        <div class="columnleft">
             <label for="classname">Course:</label><br/>
             <input type="text" id="classname" name="classname" required><br/><br/>
+
+        </div>
+        <div class="columnright">
+            <label for="section number">Section:</label><br/>
+            <input type="text" id="section" name="section" ><br/><br/>
+
+            <label for="time">Time:</label><br/>
+            <input type="text" id="time" name="time" ><br/><br/>
 
             <input type="submit" value="Create"><br/>
             <div class="successmsg">{{ successmsg }}</div>
             <div class="badmsg">{{ badmsg }}</div>
+        </div>
     </form>
 </div>
 </body>
