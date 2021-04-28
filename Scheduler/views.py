@@ -44,7 +44,6 @@ class Home(View):
 
 class Login(View):
     def get(self, request):
-        m = request.session["username"]
         return render(request, "Login.html")
 
     def post(self, request):
