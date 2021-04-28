@@ -20,10 +20,10 @@ from Scheduler.views import *
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', Home.as_view()),
-    path('login/', Login.as_view()),
-    path('CreateAccount/', CreateAccount.as_view()),
-    path('CreateCourse/', CreateCourse.as_view()),
-    path('ViewAccounts/', ViewAccounts.as_view()),
-    path('AddSection/', AddSection.as_view()),
+    path('', Login.as_view()),
+    path('Home/', Home.as_view()),
+    path('Home/CreateAccount/', CreateAccount.as_view()),
+    path('Home/CreateCourse/', CreateCourse.as_view()),
+    path('Home/ViewAccounts/', ViewAccounts.as_view()),
+    path('Home/AddSection/', AddSection.as_view()),
 ]

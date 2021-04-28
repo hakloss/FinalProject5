@@ -50,7 +50,8 @@ class Login(View):
             return render(request, "Login.html", {"badmsg": "Please enter a valid password"})
         else:
             request.session["username"] = myuser.email
-            return redirect("/")
+            print("hello")
+            return redirect("/Home")
 
 
 class CreateCourse(View):
