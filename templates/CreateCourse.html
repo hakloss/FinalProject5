@@ -17,17 +17,9 @@
 <div class="row">
     <form action="/CreateCourse/" method="post" class="accountform">
         {% csrf_token %}
-        <div class="columnleft">
+        <div class="columncenter">
             <label for="classname">Course:</label><br/>
             <input type="text" id="classname" name="classname" required><br/><br/>
-
-        </div>
-        <div class="columnright">
-            <label for="section number">Section:</label><br/>
-            <input type="text" id="section" name="section" ><br/><br/>
-
-            <label for="section time">Time:</label><br/>
-            <input type="text" id="section" name="section" ><br/><br/>
 
             <input type="submit" value="Create"><br/>
             <div class="successmsg">{{ successmsg }}</div>
