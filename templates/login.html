@@ -12,13 +12,16 @@
     <h1 class="title">TA Scheduling</h1>
 </div>
 
-<form action="/login/" method="post" class="centerlogin">
+<form action="/" method="post" class="centerlogin">
     {% csrf_token %}
     <label for="username">Username:</label><br/>
     <input type="text" id="username" name="username"><br/><br/>
     <label for="password">Password:</label><br/>
     <input type="password" id="password" name="password" ><br/><br/>
     <input type="submit" value="Login"><br/>
+    <p class="btn">
+        <a href="Home/CreateAccount/">Create Account</a>
+    </p>
     <div class="badmsg">{{ badmsg }}</div>
 </form>
 

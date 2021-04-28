@@ -57,7 +57,8 @@ class Login(View):
             return render(request, "Login.html", {"badmsg": "Please enter a valid password"})
         else:
             request.session["username"] = myuser.email
-            return redirect("/")
+            print("hello")
+            return redirect("/Home")
 
 
 class CreateCourse(View):
@@ -70,6 +71,12 @@ class CreateCourse(View):
             return render(request, "CreateCourse.html", {"badmsg": "This course already exists"})
         try:
             xcourse = course(classname=xclassname)
+            return render(request, "CreateCourse.html", {"badmsg": "Please enter a unique course name"})
+        except:
+            pass
+
+        try:
+            xcourse = course(classname=xclassname)
             xcourse.save()
             return render(request, "CreateCourse.html", {"successmsg": "Course has been created"})
         except:
@@ -80,15 +87,18 @@ class AddSection(View):
         return render(request, "AddSection.html")
 
     def post(self, request):
+
         xcourse = request.POST.get('course')
         xsectionnum = request.POST.get('number')
         print(xsectionnum)
         xsectiontime = request.POST.get('time')
         print(xsectiontime)
 
+
         if functions.duplicateSectionCheck(xsectionnum,xsectiontime,xcourse):
             return render(request, "CreateCourse.html", {"badmsg": "This course already exists"})
         try:
+            xcourse = course.objects.get(classname=request.POST.get('classname'))
             xsection = section(time=xsectiontime, number=xsectionnum, course=xcourse)
             xsection.save()
             return render(request, "AddSection.html", {"successmsg": "Section has been added"})

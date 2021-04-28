@@ -12,11 +12,14 @@
     <h1 class="title">TA Scheduling</h1>
 
 </div>
-<p class="homelink"><a href="/">Home</a></p>
+<p class="homelink"><a href="/Home/">Home</a></p>
 
 <div class="row">
-    <form action="/CreateCourse/" method="post" class="centerlogin">
+
+    <form action="/Home/CreateCourse/" method="post" class="accountform">
         {% csrf_token %}
+        <div class="columncenter">
+
             <label for="classname">Course:</label><br/>
             <input type="text" id="classname" name="classname" required><br/><br/>
 
