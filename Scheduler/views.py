@@ -73,15 +73,17 @@ class AddSection(View):
 
     def post(self, request):
         xcourse = course.objects.get(classname=request.POST.get('classname'))
-        xsectionnum = request.POST.get('section number')
-        xsectiontime = request.POST.get('section time')
+        xsectionnum = request.POST.get('section_number')
+        print(xsectionnum)
+        xsectiontime = request.POST.get('section_time')
+        print(xsectiontime)
 
         try:
             xsection = section(time=xsectiontime, number=xsectionnum, course=xcourse)
             xsection.save()
-            return render(request, "CreateCourse.html", {"successmsg": "Course has been created"})
+            return render(request, "AddSection.html", {"successmsg": "section has been added"})
         except:
-            return render(request, "CreateCourse.html", {"badmsg": "Please enter a valid course name"})
+            return render(request, "AddSection.html", {"badmsg": "section has not been added"})
 
 class ViewAccounts(View):
     def get(self, request):
