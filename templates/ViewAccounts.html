@@ -15,28 +15,58 @@
 <p class="homelink"><a href="/Home/">Home</a></p>
 
 <table border="1">
-   <thead>
-       <th>
-           First Name
-       </th>
-       <th>
-           Last Name
-       </th>
-       <th>
-           Email
-       </th>
-       <th>
-           Role
-       </th>
-   </thead>
+    <thead>
+    <th>
+        First Name
+    </th>
+    <th>
+        Last Name
+    </th>
+    <th>
+        Email
+    </th>
+    <th>
+        Role
+    </th>
+    <th>
+        Work Phone
+    </th>
+    <th>
+        Personal Phone
+    </th>
+    <th>
+        Address
+    </th>
+    <th>
+        City
+    </th>
+    <th>
+        State
+    </th>
+    <th>
+        Zip
+    </th>
+    <th>
+        &nbsp
+    </th>
+    </thead>
     <tbody>
     {% for i in obj %}
-    <tr>
-        <td>{{ i.fname }}</td>
-        <td>{{ i.lname }}</td>
-        <td>{{ i.email}}</td>
-        <td>{{ i.role}}</td>
-    </tr>
+        <tr>
+            <td>{{ i.fname }}</td>
+            <td>{{ i.lname }}</td>
+            <td>{{ i.email}}</td>
+            <td>{{ i.role}}</td>
+            <td>{{ i.wphone}}</td>
+            <td>{{ i.pphone}}</td>
+            <td>{{ i.address}}</td>
+            <td>{{ i.city}}</td>
+            <td>{{ i.state}}</td>
+            <td>{{ i.zip}}</td>
+            <td><a href="#">Delete</a> </td>
+
+
+        </tr>
     {% endfor %}
     </tbody>
 </table>

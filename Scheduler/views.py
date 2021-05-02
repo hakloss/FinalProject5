@@ -42,6 +42,27 @@ class Home(View):
     def post(self, request):
         return render(request, "Home.html")
 
+class AdminHome(View):
+    def get(self, request):
+        return render(request, "AdminHome.html")
+
+    def post(self, request):
+        return render(request, "AdminHome.html")
+
+class InstructorHome(View):
+    def get(self, request):
+        return render(request, "InstructorHome.html")
+
+    def post(self, request):
+        return render(request, "InstructorHome.html")
+
+class TAHome(View):
+    def get(self, request):
+        return render(request, "TAHome.html")
+
+    def post(self, request):
+        return render(request, "TAHome.html")
+
 class Login(View):
     def get(self, request):
         return render(request, "Login.html")
@@ -82,9 +103,15 @@ class AddSection(View):
 
     def post(self, request):
 
+        xcourse = request.POST.get('course')
         xsectionnum = request.POST.get('number')
+        print(xsectionnum)
         xsectiontime = request.POST.get('time')
+        print(xsectiontime)
 
+
+        if functions.duplicateSectionCheck(xsectionnum,xsectiontime,xcourse):
+            return render(request, "CreateCourse.html", {"badmsg": "This course already exists"})
         try:
             xcourse = course.objects.get(classname=request.POST.get('classname'))
             xsection = section(time=xsectiontime, number=xsectionnum, course=xcourse)
@@ -100,3 +127,31 @@ class ViewAccounts(View):
 
     def post(self, request):
         return render(request, "ViewAccounts.html")
+
+class AssignInstructor(View):
+    def get(self, request):
+        return render(request, "AssignInstructor.html")
+
+    def post(self, request):
+        return render(request, "AssignInstructor.html")
+
+class AssignTA(View):
+    def get(self, request):
+        return render(request, "AssignTA.html")
+
+    def post(self, request):
+        return render(request, "AssignTA.html")
+
+class ViewAssignments(View):
+    def get(self, request):
+        return render(request, "ViewAssignments.html")
+
+    def post(self, request):
+        return render(request, "ViewAssignments.html")
+
+class EditAccount(View):
+    def get(self, request):
+        return render(request, "EditAccount.html")
+
+    def post(self, request):
+        return render(request, "EditAccount.html")

@@ -1,0 +1,46 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>View Accounts</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'scheduler/style.css' %}" />
+</head>
+<body>
+<img class="hero" src="{% static 'img/calendar2.png' %}" width="300px">
+<div class="bar">
+    <h1 class="title">TA Scheduling</h1>
+
+</div>
+<p class="homelink"><a href="/Home/">Home</a></p>
+
+<table border="1">
+    <thead>
+    <th>
+        Course
+    </th>
+    <th>
+        Section
+    </th>
+    <th>
+        Instructor
+    </th>
+    <th>
+        TA
+    </th>
+
+    </thead>
+    <tbody>
+    {% for i in obj %}
+        <tr>
+            <td>{{ i.course }}</td>
+            <td>{{ i.section }}</td>
+            <td>{{ i.instructor}}</td>
+            <td>{{ i.ta}}</td>
+
+
+
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>

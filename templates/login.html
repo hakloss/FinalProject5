@@ -7,7 +7,7 @@
     <link rel="stylesheet" type="text/css" href="{% static 'scheduler/style.css' %}" />
 </head>
 <body>
-<img class="hero" src="{% static 'img/calendar2.png' %}">
+<img class="hero" src="{% static 'img/calendar2.png' %}" width="300px">
 <div class="bar">
     <h1 class="title">TA Scheduling</h1>
 </div>
@@ -19,9 +19,6 @@
     <label for="password">Password:</label><br/>
     <input type="password" id="password" name="password" ><br/><br/>
     <input type="submit" value="Login"><br/>
-    <p class="btn">
-        <a href="Home/CreateAccount/">Create Account</a>
-    </p>
     <div class="badmsg">{{ badmsg }}</div>
 </form>
 
