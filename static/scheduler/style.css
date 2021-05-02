@@ -18,6 +18,13 @@ a:visited{
     color:lightgray;
 }
 
+td a:link{
+    color:#6099b0;
+}
+td a:visited{
+    color:#004e72;
+}
+
 label{
     font-family: Helvetica, Arial, sans-serif;
     font-size: 18px;
@@ -70,6 +77,11 @@ td, th, thead{
     width: 80%;
 }
 
+.onecolform{
+    margin: auto;
+    width: 40%;
+}
+
 input[type=text],[type=password], select{
     width: 100%;
     padding: 12px 20px;
@@ -108,6 +120,21 @@ input[type=submit]{
     border-radius: 4px;
 }
 
+.columnbtn a {
+    display: block;
+    width: 60%;
+    margin:auto;
+    background-color: #ffbd00;
+    color: white;
+    text-transform: uppercase;
+    text-decoration: none;
+    text-align: center;
+    font-size: 18px;
+    padding: 14px 20px;
+    border: none;
+    border-radius: 4px;
+}
+
 .columnleft {
     float: left;
     width: 45%;
@@ -116,6 +143,15 @@ input[type=submit]{
     float: right;
     width: 50%;
 }
+.columnleftbtn {
+    float: left;
+    width: 45%;
+}
+.columnrightbtn {
+    float: right;
+    width: 50%;
+}
+
 .row:after {
   display: table;
   clear: both;

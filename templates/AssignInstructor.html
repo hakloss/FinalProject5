@@ -1,10 +1,46 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Assign Instructor</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'scheduler/style.css' %}" />
 </head>
 <body>
+<img class="hero" src="{% static 'img/calendar2.png' %}" width="300px">
+<div class="bar">
+    <h1 class="title">TA Scheduling</h1>
+
+</div>
+<p class="homelink"><a href="/Home/">Home</a></p>
+
+
+<div class="row">
+    <form action="/AssignInstructor/" method="post" class="accountform">
+        {% csrf_token %}
+        <div class="columnleft">
+            <label for="course">Course:</label><br/>
+            <select id="course" name="course" required>
+                <option value="one">1</option>
+                <option value="two">2</option>
+                <option value="three">3</option>
+            </select>
+
+        </div>
+        <div class="columnright">
+            <label for="instructor">Instructor:</label><br/>
+            <select id="instructor" name="instructor" required>
+                <option value="one">1</option>
+                <option value="two">2</option>
+                <option value="three">3</option>
+            </select>
+            <input type="submit" value="Save"><br/>
+            <div class="successmsg">{{ successmsg }}</div>
+            <div class="badmsg">{{ badmsg }}</div>
+        </div>
+    </form>
+
+</div>
 
 </body>
 </html>

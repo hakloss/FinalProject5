@@ -49,6 +49,20 @@ class AdminHome(View):
     def post(self, request):
         return render(request, "AdminHome.html")
 
+class InstructorHome(View):
+    def get(self, request):
+        return render(request, "InstructorHome.html")
+
+    def post(self, request):
+        return render(request, "InstructorHome.html")
+
+class TAHome(View):
+    def get(self, request):
+        return render(request, "TAHome.html")
+
+    def post(self, request):
+        return render(request, "TAHome.html")
+
 class Login(View):
     def get(self, request):
         return render(request, "Login.html")
@@ -113,3 +127,31 @@ class ViewAccounts(View):
 
     def post(self, request):
         return render(request, "ViewAccounts.html")
+
+class AssignInstructor(View):
+    def get(self, request):
+        return render(request, "AssignInstructor.html")
+
+    def post(self, request):
+        return render(request, "AssignInstructor.html")
+
+class AssignTA(View):
+    def get(self, request):
+        return render(request, "AssignTA.html")
+
+    def post(self, request):
+        return render(request, "AssignTA.html")
+
+class ViewAssignments(View):
+    def get(self, request):
+        return render(request, "ViewAssignments.html")
+
+    def post(self, request):
+        return render(request, "ViewAssignments.html")
+
+class EditAccount(View):
+    def get(self, request):
+        return render(request, "EditAccount.html")
+
+    def post(self, request):
+        return render(request, "EditAccount.html")

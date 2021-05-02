@@ -27,5 +27,11 @@ urlpatterns = [
     path('Home/ViewAccounts/', ViewAccounts.as_view()),
     path('Home/AddSection/', AddSection.as_view()),
     path('AdminHome/', AdminHome.as_view()),
+    path('InstructorHome/', InstructorHome.as_view()),
+    path('TAHome/', TAHome.as_view()),
+    path('AssignInstructor/', AssignInstructor.as_view()),
+    path('AssignTA/', AssignTA.as_view()),
+    path('ViewAssignments/', ViewAssignments.as_view()),
+    path('EditAccount', EditAccount.as_view()),
 
 ]
