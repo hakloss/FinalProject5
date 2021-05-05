@@ -37,10 +37,12 @@ class CreateAccount(View):
 
 class Home(View):
     def get(self, request):
-        return render(request, "Home.html")
+        myuser = request.session["username"]
+        return render(request, "Home.html",{"username":myuser})
 
     def post(self, request):
-        return render(request, "Home.html")
+        myuser = request.session["username"]
+        return render(request, "Home.html",{"username":myuser})
 
 class AdminHome(View):
     def get(self, request):
@@ -90,12 +92,10 @@ class CreateCourse(View):
         if functions.duplicateCourseCheck(xclassname):
             return render(request, "CreateCourse.html", {"badmsg": "This course already exists"})
 
-        try:
-            xcourse = course(classname=xclassname)
-            xcourse.save()
-            return render(request, "CreateCourse.html", {"successmsg": "Course has been created"})
-        except:
-            return render(request, "CreateCourse.html", {"badmsg": "Please enter a valid course name"})
+        xcourse = course(classname=xclassname)
+        xcourse.save()
+        return render(request, "CreateCourse.html", {"successmsg": "Course has been created"})
+
 
 class AddSection(View):
     def get(self, request):
@@ -151,15 +151,18 @@ class ViewAssignments(View):
 
 class EditAccount(View):
     def get(self, request):
+
         myuser = request.session["username"]
         myaccount=user.objects.get(email=myuser)
 
-        if(myaccount.role!="instructor" or myaccount.role!="ta"):
-            return render(request, "home.html")
+        #if(myaccount.role!="instructor" or myaccount.role!="ta"):
+        #    return render(request, "home.html")
 
         return render(request, "EditAccount.html", {"username": myuser, "account":myaccount})
-
+        #return render(request, "EditAccount.html")
     def post(self, request):
+
+
         myuser = request.session["username"]
         myaccount = user.objects.get(email=myuser)
 
@@ -176,5 +179,6 @@ class EditAccount(View):
 
         myaccount.save()
 
+        return render(request, "EditAccount.html", {"username": myuser, "successmsg": "Account has been updated", "account":myaccount})
 
-        return render(request, "EditAccount.html", {"username": myuser, "successmsg": "Account has been updated"})
+        #return render(request, "EditAccount.html")

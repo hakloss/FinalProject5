@@ -9,9 +9,11 @@ from Scheduler.models import *
 class TestDuplicateAccount(unittest.TestCase):
     def setUp(self):
         self.acc = user(fname="Haley", lname="K", email="hajaroch@uwm.edu", password="pass")
+        self.acc2 = user(fname="Haley", lname="K", email="hajaroch@uwm.edu", password="pass")
 
     def test_duplicate(self):
-        self.assertEqual(functions.duplicateUserCheck(self.acc.email), True, msg="Account already exists")
+        print(self.acc.email)
+        self.assertEqual(functions.duplicateUserCheck("hajaroch@uwm.edu"), True, msg="Account already exists")
 
     def test_noDuplicate(self):
         self.assertEqual(functions.duplicateUserCheck("test@email.com"), False, msg="Not a duplicate")
@@ -58,7 +60,6 @@ class Login(TestCase):
 
     def test_badPassword(self):
         r = self.client.post('/', {"username": self.x.email, "password": "blah"}, follow=True)
-        print(r.context)
         self.assertEqual(r.context["badmsg"], "Please enter a valid password")
 
     def test_badUsername(self):
@@ -75,17 +76,18 @@ class CreateAccount(TestCase):
         self.x.save()
 
     def test_validAccount(self):
-        r = self.client.post("/EditAccount/", {"fname": "Hallllley", "lname": "Kloss", "email": "email@email.uwm",
+        r = self.client.post("/CreateAccount/", {"fname": "Hallllley", "lname": "Kloss", "email": "thing@uwm.edu",
                                                "password": "password", "role": "admin"}, follow=True)
         self.assertEqual(r.context["successmsg"], "Account has been created")
-
-    def test_invalidAccount(self):
-        r = self.client.post("/EditAccount/", {"fname": "Hallllley", "lname": "Kloss", "email": self.x.email,
-                                               "password": self.x.password, "role": self.x.role}, follow=True)
-        self.assertEqual(r.context["badmsg"], "Please enter a valid email")
-
-
 """
+    def test_invalidAccount(self):
+        r = self.client.post("/CreateAccount/", {"fname": "Hallllley", "lname": "Kloss", "email": "thing",
+                                               "password": "password", "role": "instructor"}, follow=True)
+
+        self.assertEqual(r.context["badmsg"], "Please enter a valid email")
+"""
+
+
 class EditAccount(TestCase):
     def setUp(self):
         self.client = Client()
@@ -93,20 +95,18 @@ class EditAccount(TestCase):
                       city="Milwaukee", state="WI", zip="55555", pphone="555-555-5555", wphone="555-555-5555")
         self.x.save()
 
-        self.account=user.objects.get(self.x.email)
-
     def test_validEdit(self):
         session = self.client.session
         session['username'] = self.x.email
         session.save()
 
         r = self.client.post("/EditAccount/", {"fname": "Hallllley", "lname":"Kloss", "email":self.x.email, "password":self.x.password, "role":self.x.role}, follow=True)
-        print(r.context["username"])
-        self.assertEqual(r.context["successmsg"], "Account has been updated")
         print(r.context)
+        self.assertEqual(r.context["successmsg"], "Account has been updated")
+        self.assertEqual(r.context["account"].fname, "Hallllley")
+        self.assertEqual(r.context["account"].lname, "Kloss")
 
 
 
-        #self.assertEqual(account.email, "Hallllley")
 
-"""
+
