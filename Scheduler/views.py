@@ -65,7 +65,7 @@ class TAHome(View):
 
 class Login(View):
     def get(self, request):
-        return render(request, "Login.html")
+        return render(request, "Login.html",{})
 
     def post(self, request):
         badPassword = False
@@ -151,7 +151,30 @@ class ViewAssignments(View):
 
 class EditAccount(View):
     def get(self, request):
-        return render(request, "EditAccount.html")
+        myuser = request.session["username"]
+        myaccount=user.objects.get(email=myuser)
+
+        if(myaccount.role!="instructor" or myaccount.role!="ta"):
+            return render(request, "home.html")
+
+        return render(request, "EditAccount.html", {"username": myuser, "account":myaccount})
 
     def post(self, request):
-        return render(request, "EditAccount.html")
+        myuser = request.session["username"]
+        myaccount = user.objects.get(email=myuser)
+
+        myaccount.fname = request.POST.get('fname')
+        myaccount.lname = request.POST.get('lname')
+        myaccount.email = request.POST.get('email')
+        myaccount.password = request.POST.get('password')
+        myaccount.address = request.POST.get('address')
+        myaccount.city = request.POST.get('city')
+        myaccount.state = request.POST.get('state')
+        myaccount.zip = request.POST.get('zip')
+        myaccount.pphone = request.POST.get('pphone')
+        myaccount.wphone = request.POST.get('wphone')
+
+        myaccount.save()
+
+
+        return render(request, "EditAccount.html", {"username": myuser, "successmsg": "Account has been updated"})
