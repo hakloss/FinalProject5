@@ -99,26 +99,41 @@ class CreateCourse(View):
 
 class AddSection(View):
     def get(self, request):
-        return render(request, "AddSection.html")
+        myuser = request.session["username"]
+        myaccount = user.objects.get(email=myuser)
+        allcourses=(course.objects.values())
+
+        courselist=[]
+        for i in allcourses:
+            courselist.append(i['classname'])
+
+        return render(request, "AddSection.html",{"username": myuser, "account":myaccount, 'courselist':courselist})
 
     def post(self, request):
+        myuser = request.session["username"]
+        myaccount = user.objects.get(email=myuser)
+        allcourses = (course.objects.values())
+
+        courselist = []
+        for i in allcourses:
+            courselist.append(i['classname'])
+
+
 
         xcourse = request.POST.get('course')
         xsectionnum = request.POST.get('number')
-        print(xsectionnum)
         xsectiontime = request.POST.get('time')
-        print(xsectiontime)
 
 
         if functions.duplicateSectionCheck(xsectionnum,xsectiontime,xcourse):
-            return render(request, "CreateCourse.html", {"badmsg": "This course already exists"})
+            return render(request, "CreateCourse.html", {"badmsg": "This course already exists", "username": myuser, 'courselist':courselist})
         try:
             xcourse = course.objects.get(classname=request.POST.get('classname'))
             xsection = section(time=xsectiontime, number=xsectionnum, course=xcourse)
             xsection.save()
-            return render(request, "AddSection.html", {"successmsg": "Section has been added"})
+            return render(request, "AddSection.html", {"successmsg": "Section has been added","username": myuser, 'courselist':courselist})
         except:
-            return render(request, "AddSection.html", {"badmsg": "Section has not been added"})
+            return render(request, "AddSection.html", {"badmsg": "Section has not been added", "username": myuser, "account":myaccount, 'courselist':courselist})
 
 class ViewAccounts(View):
     def get(self, request):
@@ -151,18 +166,12 @@ class ViewAssignments(View):
 
 class EditAccount(View):
     def get(self, request):
-
         myuser = request.session["username"]
         myaccount=user.objects.get(email=myuser)
 
-        #if(myaccount.role!="instructor" or myaccount.role!="ta"):
-        #    return render(request, "home.html")
-
         return render(request, "EditAccount.html", {"username": myuser, "account":myaccount})
-        #return render(request, "EditAccount.html")
+
     def post(self, request):
-
-
         myuser = request.session["username"]
         myaccount = user.objects.get(email=myuser)
 
@@ -180,5 +189,3 @@ class EditAccount(View):
         myaccount.save()
 
         return render(request, "EditAccount.html", {"username": myuser, "successmsg": "Account has been updated", "account":myaccount})
-
-        #return render(request, "EditAccount.html")

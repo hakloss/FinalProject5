@@ -18,12 +18,16 @@
 <p class="homelink"><a href="/Home/">Home</a></p>
 
 <div class="row">
-    <form action="/Home/AddSection/" method="post" class="accountform">
+    <form action="/AddSection/" method="post" class="accountform">
 
         {% csrf_token %}
         <div class="columnleft">
             <label for="classname">Course:</label><br/>
-            <input type="text" id="classname" name="classname" required><br/><br/>
+            <select id="classname" name="classname" required>
+                {% for i in courselist %}
+                <option value={{ i }}>{{ i }}</option>
+                {% endfor %}
+            </select>
 
         </div>
         <div class="columnright">

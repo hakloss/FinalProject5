@@ -11,11 +11,13 @@ class TestDuplicateAccount(unittest.TestCase):
         self.acc = user(fname="Haley", lname="K", email="hajaroch@uwm.edu", password="pass")
         self.acc.save()
 
+
     def test_duplicate(self):
         self.assertEqual(True, functions.duplicateUserCheck("hajaroch@uwm.edu"), msg="Account already exists")
 
     def test_noDuplicate(self):
-        self.assertEqual(functions.duplicateUserCheck("test23@email.com"), False, msg="Not a duplicate")
+        self.acc2 = user(fname="Haley", lname="K", email="test23@email.com", password="pass")
+        self.assertEqual(functions.duplicateUserCheck(self.acc2.email), False, msg="Not a duplicate")
 
 
 class TestDuplicateCourse(unittest.TestCase):
