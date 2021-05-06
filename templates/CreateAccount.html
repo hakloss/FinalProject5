@@ -16,7 +16,7 @@
 
 
 <div class="row">
-    <form action="/Home/CreateAccount/" method="post" class="accountform">
+    <form action="/CreateAccount/" method="post" class="accountform">
         {% csrf_token %}
         <div class="columnleft"><label for="fname">First name:</label><br/>
             <input type="text" id="fname" name="fname" required><br/><br/>
@@ -37,13 +37,13 @@
                 <option value="ta">TA</option>
             </select><br/><br/>
             <label for="maxsection">Max Sections:</label><br/>
-            <select id="maxsection" name="maxsection" required>
-                <option value="one">1</option>
-                <option value="two">2</option>
-                <option value="three">3</option>
+            <select id="maxsection" name="maxsection">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
             </select><br/><br/>
             <label for="skills">Skills:</label><br/>
-            <input type="text" id="skills" name="skills" required><br/><br/>
+            <input type="text" id="skills" name="skills"><br/><br/>
 
         </div>
         <div class="columnright"><label for="address">Address:</label><br/>

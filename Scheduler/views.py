@@ -37,10 +37,12 @@ class CreateAccount(View):
 
 class Home(View):
     def get(self, request):
-        return render(request, "Home.html")
+        myuser = request.session["username"]
+        return render(request, "Home.html",{"username":myuser})
 
     def post(self, request):
-        return render(request, "Home.html")
+        myuser = request.session["username"]
+        return render(request, "Home.html",{"username":myuser})
 
 class AdminHome(View):
     def get(self, request):
@@ -65,7 +67,7 @@ class TAHome(View):
 
 class Login(View):
     def get(self, request):
-        return render(request, "Login.html")
+        return render(request, "Login.html",{})
 
     def post(self, request):
         badPassword = False
@@ -90,35 +92,48 @@ class CreateCourse(View):
         if functions.duplicateCourseCheck(xclassname):
             return render(request, "CreateCourse.html", {"badmsg": "This course already exists"})
 
-        try:
-            xcourse = course(classname=xclassname)
-            xcourse.save()
-            return render(request, "CreateCourse.html", {"successmsg": "Course has been created"})
-        except:
-            return render(request, "CreateCourse.html", {"badmsg": "Please enter a valid course name"})
+        xcourse = course(classname=xclassname)
+        xcourse.save()
+        return render(request, "CreateCourse.html", {"successmsg": "Course has been created"})
+
 
 class AddSection(View):
     def get(self, request):
-        return render(request, "AddSection.html")
+        myuser = request.session["username"]
+        myaccount = user.objects.get(email=myuser)
+        allcourses=(course.objects.values())
+
+        courselist=[]
+        for i in allcourses:
+            courselist.append(i['classname'])
+
+        return render(request, "AddSection.html",{"username": myuser, "account":myaccount, 'courselist':courselist})
 
     def post(self, request):
+        myuser = request.session["username"]
+        myaccount = user.objects.get(email=myuser)
+        allcourses = (course.objects.values())
+
+        courselist = []
+        for i in allcourses:
+            courselist.append(i['classname'])
+
+
 
         xcourse = request.POST.get('course')
         xsectionnum = request.POST.get('number')
-        print(xsectionnum)
         xsectiontime = request.POST.get('time')
-        print(xsectiontime)
 
 
         if functions.duplicateSectionCheck(xsectionnum,xsectiontime,xcourse):
-            return render(request, "CreateCourse.html", {"badmsg": "This course already exists"})
+            return render(request, "CreateCourse.html", {"badmsg": "This course already exists", "username": myuser, 'courselist':courselist})
         try:
             xcourse = course.objects.get(classname=request.POST.get('classname'))
             xsection = section(time=xsectiontime, number=xsectionnum, course=xcourse)
             xsection.save()
-            return render(request, "AddSection.html", {"successmsg": "Section has been added"})
+            return render(request, "AddSection.html", {"successmsg": "Section has been added","username": myuser, 'courselist':courselist})
         except:
-            return render(request, "AddSection.html", {"badmsg": "Section has not been added"})
+            return render(request, "AddSection.html", {"badmsg": "Section has not been added", "username": myuser, "account":myaccount, 'courselist':courselist})
 
 class ViewAccounts(View):
     def get(self, request):
@@ -151,7 +166,26 @@ class ViewAssignments(View):
 
 class EditAccount(View):
     def get(self, request):
-        return render(request, "EditAccount.html")
+        myuser = request.session["username"]
+        myaccount=user.objects.get(email=myuser)
+
+        return render(request, "EditAccount.html", {"username": myuser, "account":myaccount})
 
     def post(self, request):
-        return render(request, "EditAccount.html")
+        myuser = request.session["username"]
+        myaccount = user.objects.get(email=myuser)
+
+        myaccount.fname = request.POST.get('fname')
+        myaccount.lname = request.POST.get('lname')
+        myaccount.email = request.POST.get('email')
+        myaccount.password = request.POST.get('password')
+        myaccount.address = request.POST.get('address')
+        myaccount.city = request.POST.get('city')
+        myaccount.state = request.POST.get('state')
+        myaccount.zip = request.POST.get('zip')
+        myaccount.pphone = request.POST.get('pphone')
+        myaccount.wphone = request.POST.get('wphone')
+
+        myaccount.save()
+
+        return render(request, "EditAccount.html", {"username": myuser, "successmsg": "Account has been updated", "account":myaccount})
