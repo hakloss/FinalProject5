@@ -22,4 +22,20 @@ def duplicateSectionCheck(number,time,course):
             return True
     return False
 
+def checkAdminRole(email):
+    account = user.objects.get(email=email)
+    if (account.role=="admin"):
+        return True
+    return False
 
+def checkInstructorRole(email):
+    account = user.objects.get(email=email)
+    if (account.role=="instructor"):
+        return True
+    return False
+
+def checkTARole(email):
+    account = user.objects.get(email=email)
+    if (account.role=="ta"):
+        return True
+    return False
