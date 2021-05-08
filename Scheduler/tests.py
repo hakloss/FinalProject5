@@ -6,7 +6,7 @@ from Scheduler.models import *
 
 # Create your tests here.
 
-class TestDuplicateAccount(unittest.TestCase):
+class TestDuplicateAccount(TestCase):
     def setUp(self):
         self.acc = user(fname="Haley", lname="K", email="hajaroch@uwm.edu", password="pass")
         self.acc.save()
@@ -45,6 +45,24 @@ class TestDuplicateSection(unittest.TestCase):
 
     def test_differentSection(self):
         self.assertEqual(functions.duplicateSectionCheck("903", "12:00", self.s.course), False, msg="Not a duplicate")
+
+class TestCheckAdminAccount(TestCase):
+    def setUp(self):
+        self.x = user(fname="John", lname="Smith", email="email@email.com", role="admin", password="fdjhska;afds;hjk")
+        self.x.save()
+        self.y = user(fname="Joe", lname="Johnson", email="emailOne@password.com", role="instructor", password="fdsahjk")
+        self.y.save()
+        self.z = user(fname="Sam", lname="Brown", email="emailTwo@something.com", role="ta", password="jhfkdjsalfhadis")
+        self.z.save()
+
+    def test_admin(self):
+        self.assertTrue(functions.checkAdminRole(self.x.email))
+
+    def test_instructor(self):
+        self.assertFalse(functions.checkAdminRole(self.y.email))
+
+    def test_ta(self):
+        self.assertFalse(functions.checkAdminRole(self.z.email))
 
 
 # ACCEPTANCE TESTS
