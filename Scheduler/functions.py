@@ -22,4 +22,11 @@ def duplicateSectionCheck(number,time,course):
             return True
     return False
 
+def validateEmail(email):
+    at="@"
+    dot="."
+    if at in email and dot in email:
+        return True
+    return False
+
 

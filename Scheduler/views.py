@@ -12,10 +12,11 @@ class CreateAccount(View):
 
     def post(self, request):
         xrole = request.POST.get('role')
+        request.session['role'] = xrole
         if xrole=="TA":
             return redirect("/CreateTA")
         else:
-            return redirect("/CreateOther")
+            return redirect("/CreateOther",{'role':xrole})
 
 class CreateTA(View):
     def get(self, request):
@@ -35,19 +36,22 @@ class CreateTA(View):
         xpphone = request.POST.get('pphone')
         xwphone = request.POST.get('wphone')
 
+        if not functions.validateEmail(xemail):
+            return render(request, "CreateTA.html", {"badmsg": "Please enter a valid email"})
         if functions.duplicateUserCheck(xemail):
             return render(request, "CreateTA.html", {"badmsg": "An account for this email already exists"})
-        try:
-            account = user(fname=xfname, lname=xlname, email=xemail, password=xpassword, role="TA", maxsection=xmaxsection, skills=xskills,
-                       address=xaddress, city=xcity, state=xstate, zip=xzip, pphone=xpphone, wphone=xwphone)
-            account.save()
 
-            return render(request, "CreateTA.html", {"successmsg":"Account has been created"})
-        except ValueError:
-            return render(request, "CreateTA.html", {"badmsg": "Please enter a valid email"})
+        account = user(fname=xfname, lname=xlname, email=xemail, password=xpassword, role="TA", maxsection=xmaxsection, skills=xskills,
+                       address=xaddress, city=xcity, state=xstate, zip=xzip, pphone=xpphone, wphone=xwphone)
+        account.save()
+
+        return render(request, "CreateTA.html", {"successmsg":"Account has been created"})
+
 
 class CreateOther(View):
     def get(self, request):
+        role=request.session['role']
+        print(role)
         return render(request, "CreateOther.html")
 
     def post(self, request):
@@ -55,7 +59,6 @@ class CreateOther(View):
         xlname = request.POST.get('lname')
         xemail = request.POST.get('email')
         xpassword = request.POST.get('password')
-        xrole = request.POST.get('role')
         xaddress = request.POST.get('address')
         xcity = request.POST.get('city')
         xstate = request.POST.get('state')
@@ -63,16 +66,18 @@ class CreateOther(View):
         xpphone = request.POST.get('pphone')
         xwphone = request.POST.get('wphone')
 
+        xrole = request.session['role']
+
+        if not functions.validateEmail(xemail):
+            return render(request, "CreateOther.html", {"badmsg": "Please enter a valid email"})
         if functions.duplicateUserCheck(xemail):
             return render(request, "CreateOther.html", {"badmsg": "An account for this email already exists"})
-        try:
-            account = user(fname=xfname, lname=xlname, email=xemail, password=xpassword, role=xrole,
-                       address=xaddress, city=xcity, state=xstate, zip=xzip, pphone=xpphone, wphone=xwphone)
-            account.save()
 
-            return render(request, "CreateOther.html", {"successmsg":"Account has been created"})
-        except ValueError:
-            return render(request, "CreateOther.html", {"badmsg": "Please enter a valid email"})
+        account = user(fname=xfname, lname=xlname, email=xemail, password=xpassword, role=xrole,
+                       address=xaddress, city=xcity, state=xstate, zip=xzip, pphone=xpphone, wphone=xwphone)
+        account.save()
+        return render(request, "CreateOther.html", {"successmsg":"Account has been created"})
+
 
 
 class Home(View):

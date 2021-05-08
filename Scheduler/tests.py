@@ -11,13 +11,11 @@ class TestDuplicateAccount(unittest.TestCase):
         self.acc = user(fname="Haley", lname="K", email="hajaroch@uwm.edu", password="pass")
         self.acc.save()
 
-
     def test_duplicate(self):
         self.assertEqual(True, functions.duplicateUserCheck("hajaroch@uwm.edu"), msg="Account already exists")
 
     def test_noDuplicate(self):
-        self.acc2 = user(fname="Haley", lname="K", email="test23@email.com", password="pass")
-        self.assertEqual(functions.duplicateUserCheck(self.acc2.email), False, msg="Not a duplicate")
+        self.assertEqual(functions.duplicateUserCheck("test45@email.com"), False, msg="Not a duplicate")
 
 
 class TestDuplicateCourse(unittest.TestCase):
@@ -46,6 +44,16 @@ class TestDuplicateSection(unittest.TestCase):
     def test_differentSection(self):
         self.assertEqual(functions.duplicateSectionCheck("903", "12:00", self.s.course), False, msg="Not a duplicate")
 
+class TestValidateEmail(unittest.TestCase):
+    def setUp(self):
+        self.good="haley@uwm.edu"
+        self.bad="fdgsdfg"
+
+    def test_valid(self):
+        self.assertEqual(functions.validateEmail(self.good), True, msg="should be valid")
+
+    def test_invalid(self):
+        self.assertEqual(functions.validateEmail(self.bad), False, msg="should be invalid")
 
 # ACCEPTANCE TESTS
 
@@ -73,22 +81,48 @@ class Login(TestCase):
 class CreateAccount(TestCase):
     def setUp(self):
         self.client = Client()
-        self.x = user(fname="Haley", lname="K", email="test@email.com", password="password", role="admin",
-                      address="123 street",
+        self.x = user(fname="Haley", lname="K", email="test@email.com", password="password", address="123 street",
                       city="Milwaukee", state="WI", zip="55555", pphone="555-555-5555", wphone="555-555-5555")
         self.x.save()
 
     def test_validAccount(self):
-        r = self.client.post("/CreateAccount/", {"fname": "Hallllley", "lname": "Kloss", "email": "thing@uwm.edu",
-                                               "password": "password", "role": "admin"}, follow=True)
+        session = self.client.session
+        session['role'] = 'Admin'
+        session.save()
+
+        r = self.client.post("/CreateOther/", {"fname": "Hallllley", "lname": "Kloss", "email": "thing@uwm.edu",
+                                               "password": "password"}, follow=True)
         self.assertEqual(r.context["successmsg"], "Account has been created")
-"""
+
     def test_invalidAccount(self):
-        r = self.client.post("/CreateAccount/", {"fname": "Hallllley", "lname": "Kloss", "email": "thing",
-                                               "password": "password", "role": "instructor"}, follow=True)
+        session = self.client.session
+        session['role'] = 'Instructor'
+        session.save()
+
+        r = self.client.post("/CreateOther/", {"fname": "Hallllley", "lname": "Kloss", "email": "thing",
+                                               "password": "password"}, follow=True)
 
         self.assertEqual(r.context["badmsg"], "Please enter a valid email")
-"""
+
+    def test_validAccountTA(self):
+        session = self.client.session
+        session['role'] = 'TA'
+        session.save()
+
+        r = self.client.post("/CreateOther/", {"fname": "Hallllley", "lname": "Kloss", "email": "thing@uwm.edu",
+                                               "password": "password"}, follow=True)
+        self.assertEqual(r.context["successmsg"], "Account has been created")
+
+    def test_invalidAccountTA(self):
+        session = self.client.session
+        session['role'] = 'TA'
+        session.save()
+
+        r = self.client.post("/CreateOther/", {"fname": "Hallllley", "lname": "Kloss", "email": "thing",
+                                               "password": "password"}, follow=True)
+
+        self.assertEqual(r.context["badmsg"], "Please enter a valid email")
+
 
 
 class EditAccount(TestCase):
