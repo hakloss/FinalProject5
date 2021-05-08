@@ -8,14 +8,15 @@ from Scheduler.models import *
 
 class TestDuplicateAccount(unittest.TestCase):
     def setUp(self):
-        self.acc = user(fname="Haley", lname="K", email="hajaroch@uwm.edu", password="pass")
+        self.acc = user(fname="Haley", lname="K", email="hajaroch@uwm.edu", password="pass", role="TA")
         self.acc.save()
+        self.acc2 = user(fname="Haley", lname="K", email="hajaroch@uwm.edu", password="pass", role="TA")
 
     def test_duplicate(self):
         self.assertEqual(True, functions.duplicateUserCheck("hajaroch@uwm.edu"), msg="Account already exists")
 
     def test_noDuplicate(self):
-        self.assertEqual(functions.duplicateUserCheck("test45@email.com"), False, msg="Not a duplicate")
+        self.assertEqual(functions.duplicateUserCheck(self.acc2.email), False, msg="Not a duplicate")
 
 
 class TestDuplicateCourse(unittest.TestCase):
@@ -138,7 +139,6 @@ class EditAccount(TestCase):
         session.save()
 
         r = self.client.post("/EditAccount/", {"fname": "Hallllley", "lname":"Kloss", "email":self.x.email, "password":self.x.password, "role":self.x.role}, follow=True)
-        print(r.context)
         self.assertEqual(r.context["successmsg"], "Account has been updated")
         self.assertEqual(r.context["account"].fname, "Hallllley")
         self.assertEqual(r.context["account"].lname, "Kloss")
