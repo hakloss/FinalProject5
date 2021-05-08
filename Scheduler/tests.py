@@ -64,6 +64,41 @@ class TestCheckAdminAccount(TestCase):
     def test_ta(self):
         self.assertFalse(functions.checkAdminRole(self.z.email))
 
+class TestCheckInstructorAccount(TestCase):
+    def setUp(self):
+        self.x = user(fname="John", lname="Smith", email="email@email.com", role="admin", password="fdjhska;afds;hjk")
+        self.x.save()
+        self.y = user(fname="Joe", lname="Johnson", email="emailOne@password.com", role="instructor", password="fdsahjk")
+        self.y.save()
+        self.z = user(fname="Sam", lname="Brown", email="emailTwo@something.com", role="ta", password="jhfkdjsalfhadis")
+        self.z.save()
+
+    def test_admin(self):
+        self.assertFalse(functions.checkInstructorRole(self.x.email))
+
+    def test_instructor(self):
+        self.assertTrue(functions.checkInstructorRole(self.y.email))
+
+    def test_ta(self):
+        self.assertFalse(functions.checkInstructorRole(self.z.email))
+
+class TestCheckTAAccount(TestCase):
+    def setUp(self):
+        self.x = user(fname="John", lname="Smith", email="email@email.com", role="admin", password="fdjhska;afds;hjk")
+        self.x.save()
+        self.y = user(fname="Joe", lname="Johnson", email="emailOne@password.com", role="instructor", password="fdsahjk")
+        self.y.save()
+        self.z = user(fname="Sam", lname="Brown", email="emailTwo@something.com", role="ta", password="jhfkdjsalfhadis")
+        self.z.save()
+
+    def test_admin(self):
+        self.assertFalse(functions.checkTARole(self.x.email))
+
+    def test_instructor(self):
+        self.assertFalse(functions.checkTARole(self.y.email))
+
+    def test_ta(self):
+        self.assertTrue(functions.checkTARole(self.z.email))
 
 # ACCEPTANCE TESTS
 
