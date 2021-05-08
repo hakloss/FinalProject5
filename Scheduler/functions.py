@@ -22,6 +22,15 @@ def duplicateSectionCheck(number,time,course):
             return True
     return False
 
+
+def validateEmail(email):
+    at="@"
+    dot="."
+    if at in email and dot in email:
+        return True
+    return False
+
+
 def checkAdminRole(email):
     account = user.objects.get(email=email)
     if (account.role=="admin"):
@@ -33,6 +42,7 @@ def checkInstructorRole(email):
     if (account.role=="instructor"):
         return True
     return False
+
 
 def checkTARole(email):
     account = user.objects.get(email=email)

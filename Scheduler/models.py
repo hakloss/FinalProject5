@@ -8,7 +8,7 @@ class user(models.Model):
     password = models.CharField(max_length=30, default='empty')
     role = models.CharField(max_length=30, default='empty')
     maxsection=models.IntegerField(default=0, null=True, blank=True)
-    skills = models.CharField(max_length=254, null=True, blank=True)
+    skills = models.TextField(null=True, blank=True)
     address = models.CharField(max_length=40, null=True, blank=True)
     city = models.CharField(max_length=40, null=True, blank=True)
     state = models.CharField(max_length=2, null=True, blank=True)

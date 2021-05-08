@@ -33,5 +33,7 @@ urlpatterns = [
     path('AssignTA/', AssignTA.as_view()),
     path('ViewAssignments/', ViewAssignments.as_view()),
     path('EditAccount/', EditAccount.as_view()),
+    path('CreateTA/', CreateTA.as_view()),
+    path('CreateOther/', CreateOther.as_view()),
 
 ]

@@ -16,109 +16,20 @@
 
 
 <div class="row">
-    <form action="/CreateAccount/" method="post" class="accountform">
+    <form action="/CreateAccount/" method="post" class="onecolform">
         {% csrf_token %}
-        <div class="columnleft"><label for="fname">First name:</label><br/>
-            <input type="text" id="fname" name="fname" required><br/><br/>
-
-            <label for="lname">Last name:</label><br/>
-            <input type="text" id="lname" name="lname" required><br/><br/>
-
-            <label for="email">Email:</label><br/>
-            <input type="text" id="email" name="email" required><br/><br/>
-
-            <label for="password">Password:</label><br/>
-            <input type="text" id="password" name="password" required><br/><br/>
+        <div class="columncenter">
 
             <label for="role">Role:</label><br/>
             <select id="role" name="role" required>
-                <option value="admin">Administrator</option>
-                <option value="instructor">Instructor</option>
-                <option value="ta">TA</option>
-            </select><br/><br/>
-            <label for="maxsection">Max Sections:</label><br/>
-            <select id="maxsection" name="maxsection">
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-            </select><br/><br/>
-            <label for="skills">Skills:</label><br/>
-            <input type="text" id="skills" name="skills"><br/><br/>
-
-        </div>
-        <div class="columnright"><label for="address">Address:</label><br/>
-            <input type="text" id="address" name="address" ><br/><br/>
-
-            <label for="city">City:</label><br/>
-            <input type="text" id="city" name="city" ><br/><br/>
-
-            <label for="state">State:</label><br/>
-            <select id="state" name="state">
-                <option value="AL">AL</option>
-                <option value="AK">AK</option>
-                <option value="AR">AR</option>
-                <option value="AZ">AZ</option>
-                <option value="CA">CA</option>
-                <option value="CO">CO</option>
-                <option value="CT">CT</option>
-                <option value="DC">DC</option>
-                <option value="DE">DE</option>
-                <option value="FL">FL</option>
-                <option value="GA">GA</option>
-                <option value="HI">HI</option>
-                <option value="IA">IA</option>
-                <option value="ID">ID</option>
-                <option value="IL">IL</option>
-                <option value="IN">IN</option>
-                <option value="KS">KS</option>
-                <option value="KY">KY</option>
-                <option value="LA">LA</option>
-                <option value="MA">MA</option>
-                <option value="MD">MD</option>
-                <option value="ME">ME</option>
-                <option value="MI">MI</option>
-                <option value="MN">MN</option>
-                <option value="MO">MO</option>
-                <option value="MS">MS</option>
-                <option value="MT">MT</option>
-                <option value="NC">NC</option>
-                <option value="NE">NE</option>
-                <option value="NH">NH</option>
-                <option value="NJ">NJ</option>
-                <option value="NM">NM</option>
-                <option value="NV">NV</option>
-                <option value="NY">NY</option>
-                <option value="ND">ND</option>
-                <option value="OH">OH</option>
-                <option value="OK">OK</option>
-                <option value="OR">OR</option>
-                <option value="PA">PA</option>
-                <option value="RI">RI</option>
-                <option value="SC">SC</option>
-                <option value="SD">SD</option>
-                <option value="TN">TN</option>
-                <option value="TX">TX</option>
-                <option value="UT">UT</option>
-                <option value="VT">VT</option>
-                <option value="VA">VA</option>
-                <option value="WA">WA</option>
-                <option value="WI">WI</option>
-                <option value="WV">WV</option>
-                <option value="WY">WY</option>
+                <option value="Admin">Administrator</option>
+                <option value="Instructor">Instructor</option>
+                <option value="TA">TA</option>
             </select>
 
-            <label for="zip">ZIP:</label><br/>
-            <input type="text" id="zip" name="zip" ><br/><br/>
 
-            <label for="pphone">Personal phone number:</label><br/>
-            <input type="text" id="pphone" name="pphone" ><br/><br/>
+            <input type="submit" value="Next"><br/>
 
-            <label for="wphone">Work phone number:</label><br/>
-            <input type="text" id="wphone" name="wphone" ><br/><br/>
-
-            <input type="submit" value="Create"><br/>
-            <div class="successmsg">{{ successmsg }}</div>
-            <div class="badmsg">{{ badmsg }}</div>
         </div>
     </form>
 
