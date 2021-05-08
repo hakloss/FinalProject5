@@ -25,4 +25,5 @@ class section(models.Model):
     number = models.CharField(max_length=30, default='empty',null=True, blank=True)
     time = models.CharField(max_length=40, default='empty',null=True, blank=True)
     course = models.ForeignKey(course, on_delete=models.CASCADE, blank=False, null=True)
+    ta = models.ForeignKey(user, on_delete=models.CASCADE, blank=False, null=True)
 
