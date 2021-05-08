@@ -11,6 +11,46 @@ class CreateAccount(View):
         return render(request, "CreateAccount.html")
 
     def post(self, request):
+        xrole = request.POST.get('role')
+        if xrole=="TA":
+            return redirect("/CreateTA")
+        else:
+            return redirect("/CreateOther")
+
+class CreateTA(View):
+    def get(self, request):
+        return render(request, "CreateTA.html")
+
+    def post(self, request):
+        xfname = request.POST.get('fname')
+        xlname = request.POST.get('lname')
+        xemail = request.POST.get('email')
+        xpassword = request.POST.get('password')
+        xmaxsection=request.POST.get('maxsection')
+        xskills=request.POST.get('skills')
+        xaddress = request.POST.get('address')
+        xcity = request.POST.get('city')
+        xstate = request.POST.get('state')
+        xzip = request.POST.get('zip')
+        xpphone = request.POST.get('pphone')
+        xwphone = request.POST.get('wphone')
+
+        if functions.duplicateUserCheck(xemail):
+            return render(request, "CreateTA.html", {"badmsg": "An account for this email already exists"})
+        try:
+            account = user(fname=xfname, lname=xlname, email=xemail, password=xpassword, role="TA", maxsection=xmaxsection, skills=xskills,
+                       address=xaddress, city=xcity, state=xstate, zip=xzip, pphone=xpphone, wphone=xwphone)
+            account.save()
+
+            return render(request, "CreateTA.html", {"successmsg":"Account has been created"})
+        except ValueError:
+            return render(request, "CreateTA.html", {"badmsg": "Please enter a valid email"})
+
+class CreateOther(View):
+    def get(self, request):
+        return render(request, "CreateOther.html")
+
+    def post(self, request):
         xfname = request.POST.get('fname')
         xlname = request.POST.get('lname')
         xemail = request.POST.get('email')
@@ -24,15 +64,15 @@ class CreateAccount(View):
         xwphone = request.POST.get('wphone')
 
         if functions.duplicateUserCheck(xemail):
-            return render(request, "CreateAccount.html", {"badmsg": "An account for this email already exists"})
+            return render(request, "CreateOther.html", {"badmsg": "An account for this email already exists"})
         try:
             account = user(fname=xfname, lname=xlname, email=xemail, password=xpassword, role=xrole,
                        address=xaddress, city=xcity, state=xstate, zip=xzip, pphone=xpphone, wphone=xwphone)
             account.save()
 
-            return render(request, "CreateAccount.html", {"successmsg":"Account has been created"})
+            return render(request, "CreateOther.html", {"successmsg":"Account has been created"})
         except ValueError:
-            return render(request, "CreateAccount.html", {"badmsg": "Please enter a valid email"})
+            return render(request, "CreateOther.html", {"badmsg": "Please enter a valid email"})
 
 
 class Home(View):
