@@ -110,8 +110,20 @@ class TestCheckTAAccount(TestCase):
 
     def test_ta(self):
         self.assertTrue(functions.checkTARole(self.z.email))
+""""
+class TestgetAccount(TestCase):
+    def setUp(self):
+        self.x = user(fname="John", lname="Smith", email="email@email.com", role="admin", password="fdjhska;afds;hjk")
+        self.x.save()
 
+        session = self.client.session
+        session['username'] = self.x.email
+        session.save()
 
+    def test_returnAccount(self):
+        r = self.client.post('/', {"username": self.x.email}, follow=True)
+        self.assertEqual(functions.getAccount(r), "email@email.com", msg="returns primary key for acount")
+"""
 # ACCEPTANCE TESTS
 
 class Login(TestCase):
@@ -128,11 +140,11 @@ class Login(TestCase):
 
     def test_badPassword(self):
         r = self.client.post('/', {"username": self.x.email, "password": "blah"}, follow=True)
-        self.assertEqual(r.context["badmsg"], "Please enter a valid password")
+        self.assertEqual(r.context["badmsg"], "Please enter valid login credentials")
 
     def test_badUsername(self):
         r = self.client.post('/', {"username": "email", "password": self.x.password}, follow=True)
-        self.assertEqual(r.context["badmsg"], "Please enter a valid username")
+        self.assertEqual(r.context["badmsg"], "Please enter valid login credentials")
 
 
 class CreateAccount(TestCase):
@@ -200,6 +212,39 @@ class EditAccount(TestCase):
         self.assertEqual(r.context["account"].lname, "Kloss")
 
 
+class HomeRedirect(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.x = user(fname="John", lname="Smith", email="email@email.com", role="admin", password="fdjhska;afds;hjk")
+        self.x.save()
+        self.y = user(fname="Joe", lname="Johnson", email="emailOne@password.com", role="Instructor",
+                      password="fdsahjk")
+        self.y.save()
+        self.z = user(fname="Sam", lname="Brown", email="emailTwo@something.com", role="TA", password="jhfkdjsalfhadis")
+        self.z.save()
+
+
+
+    def test_adminHome(self):
+        session = self.client.session
+        session['username'] = self.x.email
+        session.save()
+        r = self.client.post("/Home",{"account":self.x, "username":self.x.email}, follow=True)
+        self.assertRedirects(r, '/AdminHome/',status_code=301, target_status_code=200, fetch_redirect_response=True)
+
+    def test_instructorHome(self):
+        session = self.client.session
+        session['username'] = self.y.email
+        session.save()
+        r = self.client.get("/Home",{"account":self.y, "username":self.y.email}, follow=True)
+        self.assertRedirects(r, '/InstructorHome/',status_code=301, target_status_code=200, fetch_redirect_response=True)
+
+    def test_taHome(self):
+        session = self.client.session
+        session['username'] = self.z.email
+        session.save()
+        r = self.client.get("/Home",{"account":self.z, "username":self.z.email}, follow=True)
+        self.assertRedirects(r, '/TAHome/',status_code=301, target_status_code=200, fetch_redirect_response=True)
 
 
 

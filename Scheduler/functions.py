@@ -49,3 +49,8 @@ def checkTARole(email):
     if (account.role=="ta"):
         return True
     return False
+
+def getAccount(request):
+    myuser = request.session["username"]
+    myaccount = user.objects.get(email=myuser)
+    return myaccount

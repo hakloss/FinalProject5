@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 
 from Scheduler import functions
@@ -8,10 +8,12 @@ from Scheduler.models import *
 # Create your views here.
 class CreateAccount(View):
     def get(self, request):
+
         return render(request, "CreateAccount.html")
 
     def post(self, request):
         xrole = request.POST.get('role')
+        print(request)
         request.session['role'] = xrole
         if xrole=="TA":
             return redirect("/CreateTA")
@@ -51,7 +53,6 @@ class CreateTA(View):
 class CreateOther(View):
     def get(self, request):
         role=request.session['role']
-        print(role)
         return render(request, "CreateOther.html")
 
     def post(self, request):
@@ -82,8 +83,15 @@ class CreateOther(View):
 
 class Home(View):
     def get(self, request):
-        myuser = request.session["username"]
-        return render(request, "Home.html",{"username":myuser})
+        #myuser = request.session["username"]
+        acc=getAccount(request)
+        if acc.role == "admin" or acc.role == "Admin":
+            return redirect("/AdminHome")
+        elif acc.role == "Instructor" or acc.role == "instructor":
+            return redirect("/InstructorHome")
+        else:
+            return redirect("/TAHome")
+        return render(request, "Home.html",{"account":acc, "username":myuser})
 
     def post(self, request):
         myuser = request.session["username"]
@@ -120,12 +128,12 @@ class Login(View):
             myuser = user.objects.get(email=request.POST["username"])
             badPassword = (myuser.password != request.POST['password'])
         except:
-            return render(request, "Login.html", {"badmsg": "Please enter a valid username"})
+            return render(request, "Login.html", {"badmsg": "Please enter valid login credentials"})
         if badPassword:
-            return render(request, "Login.html", {"badmsg": "Please enter a valid password"})
+            return render(request, "Login.html", {"badmsg": "Please enter valid login credentials"})
         else:
             request.session["username"] = myuser.email
-            return redirect("/Home")
+            return redirect("/Home", {"username": myuser})
 
 
 class CreateCourse(View):
@@ -183,10 +191,18 @@ class AddSection(View):
 class ViewAccounts(View):
     def get(self, request):
         allaccounts = user.objects.all()
-        return render(request, "ViewAccounts.html", {'obj':allaccounts})
+        acc = functions.getAccount(request)
+        return render(request, "ViewAccounts.html", {'obj':allaccounts, 'account':acc})
 
     def post(self, request):
-        return render(request, "ViewAccounts.html")
+
+        #delemail2=get_object_or_404(user, pk=delemail)
+        #a = user.objects.get(email=myuser)
+        #a.delete()
+        #delemail=request.POST.get('delemail')
+        #allaccounts = user.objects.all()
+        #acc = functions.getAccount(request)
+        return render(request, "ViewAccounts.html",{})
 
 class AssignInstructor(View):
     def get(self, request):
@@ -204,7 +220,7 @@ class AssignTA(View):
 
 class ViewAssignments(View):
     def get(self, request):
-        return render(request, "ViewAssignments.html")
+        return render(request, "ViewAssignments.html",{})
 
     def post(self, request):
         return render(request, "ViewAssignments.html")
@@ -234,3 +250,9 @@ class EditAccount(View):
         myaccount.save()
 
         return render(request, "EditAccount.html", {"username": myuser, "successmsg": "Account has been updated", "account":myaccount})
+
+class Denied(View):
+    def get(self, request):
+        return render(request, "denied.html")
+    def post(self, request):
+        return render(request, "denied.html")

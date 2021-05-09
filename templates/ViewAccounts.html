@@ -31,8 +31,15 @@
     <th>
         Work Phone
     </th>
+    {% if account.role == "admin" or account.role == "Admin"%}
     <th>
         Personal Phone
+    </th>
+    <th>
+        Max Sections
+    </th>
+    <th>
+        Skills
     </th>
     <th>
         Address
@@ -46,9 +53,11 @@
     <th>
         Zip
     </th>
+
     <th>
         &nbsp
     </th>
+    {% endif %}
     </thead>
     <tbody>
     {% for i in obj %}
@@ -58,12 +67,17 @@
             <td>{{ i.email}}</td>
             <td>{{ i.role}}</td>
             <td>{{ i.wphone}}</td>
-            <td>{{ i.pphone}}</td>
-            <td>{{ i.address}}</td>
-            <td>{{ i.city}}</td>
-            <td>{{ i.state}}</td>
-            <td>{{ i.zip}}</td>
-            <td><a href="#">Delete</a> </td>
+            {% if account.role == "admin" or account.role == "Admin" %}
+                <td>{{ i.pphone}}</td>
+                <td>{{ i.maxsection}}</td>
+                <td>{{ i.skills}}</td>
+                <td>{{ i.address}}</td>
+                <td>{{ i.city}}</td>
+                <td>{{ i.state}}</td>
+                <td>{{ i.zip}}</td>
+                <td><form action="/ViewAccounts/" method="post">{% csrf_token %}<input type="submit" value="Delete"></form></td></td>
+            {% endif %}
+
 
 
         </tr>
