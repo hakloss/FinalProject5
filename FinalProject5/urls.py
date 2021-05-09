@@ -35,5 +35,6 @@ urlpatterns = [
     path('EditAccount/', EditAccount.as_view()),
     path('CreateTA/', CreateTA.as_view()),
     path('CreateOther/', CreateOther.as_view()),
+    path('Denied/', Denied.as_view()),
 
 ]
