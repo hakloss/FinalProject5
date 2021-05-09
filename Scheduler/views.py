@@ -152,10 +152,37 @@ class AssignInstructor(View):
 
 class AssignTA(View):
     def get(self, request):
-        return render(request, "AssignTA.html")
+        myUser = request.session["username"]
+        myaccount = user.objects.get(email = myUser)
+        allsections = (section.objects.values())
+
+        sections = []
+        for i in allsections:
+            sections.append(i["number"])
+
+
+        return render(request, "AssignTA.html", {"unsername": myUser, "account":myaccount, 'sections':sections})
 
     def post(self, request):
-        return render(request, "AssignTA.html")
+        myUser = request.session["username"]
+        myaccount = user.objects.get(email=myUser)
+        allsections = (section.objects.values())
+
+        sections = []
+        for i in allsections:
+            sections.append(i["number"])
+
+        xTA = request.POST.get('ta')
+
+        if functions.duplicateUserCheck(xTA):
+            return render(request, "AssignTA.html", {"badmsg": "TA has already been assingned"})
+        try:
+            xTA = user.objects.get(classname= request.POST.get('classname'))
+            xTA = section(ta=xTA)
+            xTA.save()
+            return render(request, "AssignTA.html", {"succesmsg": "Successfully assigned a TA", "username": myUser, 'sections':sections})
+        except:
+            return render(request, "AssignTA.html", {"badmsg": "TA has not been assinged", "username": myUser, 'section':sections})
 
 class ViewAssignments(View):
     def get(self, request):
