@@ -165,7 +165,7 @@ class AssignTA(View):
 
     def post(self, request):
         myUser = request.session["username"]
-        myaccount = user.objects.get(email=myUser)
+        myaccount= user.objects.get(email=myUser)
         allsections = (section.objects.values())
 
         sections = []
