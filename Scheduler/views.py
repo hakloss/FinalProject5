@@ -215,13 +215,35 @@ class AssignInstructor(View):
         allinstructors = []
         for i in allusers:
             if checkInstructorRole(i['email']):
-                allinstructors.append(i['fname'] + " " + i['lname'])
-
+                #allinstructors.append(i['fname'] + " " + i['lname'])
+                allinstructors.append(i['fname'])
 
         return render(request, "AssignInstructor.html", {'courselist': courselist, 'allinstructors': allinstructors})
 
     def post(self, request):
-        return render(request, "AssignInstructor.html")
+        allcourses = (course.objects.values())
+        courselist = []
+        for i in allcourses:
+            courselist.append(i['classname'])
+
+        allusers = (user.objects.values())
+        allinstructors = []
+        for i in allusers:
+            if checkInstructorRole(i['email']):
+#                allinstructors.append(i['fname'] + " " + i['lname'])
+                allinstructors.append(i['fname'])
+
+        try:
+#            coursename = course.objects.get(classname=request.POST.get('classname'))
+            instructor = user.objects.get(fname=request.POST.get('instructor'))
+#            coursename.instructor = instructor
+
+            return render(request, "AssignInstructor.html", {'courselist': courselist, 'allinstructors': allinstructors,
+                                                             'successmsg': "Instructor was assigned to course"})
+
+        except:
+            return render(request, "AssignInstructor.html", {'courselist': courselist, 'allinstructors': allinstructors,
+                                                             'badmsg': "Instructor was not assigned to course"})
 
 class AssignTA(View):
     def get(self, request):
