@@ -151,9 +151,23 @@ class TestSectionList(TestCase):
         self.s1.save()
         self.s2 = section(course=self.c1, number="102")
         self.s2.save()
+        self.s3 = section(course=self.c2, number="101")
+        self.s3.save()
 
     def test_sectionlist(self):
-        self.assertEqual(functions.sectionList(), ["101", "102"], msg="should be the same")
+        self.assertEqual(functions.sectionList("301"), ["101", "102"], msg="should be the same")
+
+class TestRemainingSection(TestCase):
+    def setUp(self):
+        self.x = user(fname="John", lname="Smith", email="email@email.com", role="admin", password="fdjhska;afds;hjk", maxsection=3, remainingSection=3)
+        self.x.save()
+
+    def test_decrement(self):
+        functions.maxSectionTally(self.x.email)
+        print(self.x.remainingSection)
+        self.assertEqual(self.x.remainingSection, 2, msg="should be the same")
+
+
 
 """"
 class TestgetAccount(TestCase):

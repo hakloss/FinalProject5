@@ -36,5 +36,6 @@ urlpatterns = [
     path('CreateTA/', CreateTA.as_view()),
     path('CreateOther/', CreateOther.as_view()),
     path('Denied/', Denied.as_view()),
+    path('SelectCourse/', SelectCourse.as_view()),
 
 ]

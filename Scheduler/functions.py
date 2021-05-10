@@ -55,11 +55,13 @@ def getAccount(request):
     myaccount = user.objects.get(email=myuser)
     return myaccount
 
-def sectionList():
-    allsections = (section.objects.values())
+def sectionList(xcourse):
     sectionlist = []
+    courseobj=course.objects.get(classname=xcourse)
+    allsections = (section.objects.values())
     for i in allsections:
-        sectionlist.append(i["number"])
+        if i.get("course_id","default")==courseobj.id:
+            sectionlist.append(i["number"])
     return sectionlist
 
 def courseList():
@@ -78,3 +80,11 @@ def TAlist():
             talist.append(taname)
     print(talist)
     return talist
+
+def maxSectionTally(taEmail):
+    myuser=user.objects.get(email=taEmail)
+    print(myuser.remainingSection)
+    if myuser.remainingSection>0:
+        myuser.remainingSection-=1
+        myuser.save()
+        print(myuser.remainingSection)

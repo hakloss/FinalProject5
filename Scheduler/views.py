@@ -13,7 +13,6 @@ class CreateAccount(View):
 
     def post(self, request):
         xrole = request.POST.get('role')
-        print(request)
         request.session['role'] = xrole
         if xrole=="TA":
             return redirect("/CreateTA")
@@ -37,6 +36,7 @@ class CreateTA(View):
         xzip = request.POST.get('zip')
         xpphone = request.POST.get('pphone')
         xwphone = request.POST.get('wphone')
+        xremainingSection=request.POST.get('maxsection')
 
         if not functions.validateEmail(xemail):
             return render(request, "CreateTA.html", {"badmsg": "Please enter a valid email"})
@@ -44,7 +44,7 @@ class CreateTA(View):
             return render(request, "CreateTA.html", {"badmsg": "An account for this email already exists"})
 
         account = user(fname=xfname, lname=xlname, email=xemail, password=xpassword, role="TA", maxsection=xmaxsection, skills=xskills,
-                       address=xaddress, city=xcity, state=xstate, zip=xzip, pphone=xpphone, wphone=xwphone)
+                       address=xaddress, city=xcity, state=xstate, zip=xzip, pphone=xpphone, wphone=xwphone, remainingSection=xremainingSection)
         account.save()
 
         return render(request, "CreateTA.html", {"successmsg":"Account has been created"})
@@ -208,27 +208,50 @@ class AssignInstructor(View):
     def post(self, request):
         return render(request, "AssignInstructor.html")
 
+class SelectCourse(View):
+    def get(self, request):
+        myUser = request.session["username"]
+        myaccount = user.objects.get(email=myUser)
+
+        return render(request, "SelectCourse.html",{"username": myUser, "account":myaccount, "courselist":courseList()})
+
+    def post(self, request):
+        myUser = request.session["username"]
+        myaccount = user.objects.get(email=myUser)
+
+        xcourse = request.POST.get('classname')
+        request.session['course'] = xcourse
+
+        return redirect("/AssignTA", {"course": xcourse})
+
 class AssignTA(View):
     def get(self, request):
         myUser = request.session["username"]
         myaccount = user.objects.get(email = myUser)
+        xcourse = request.session['course']
 
-        return render(request, "AssignTA.html", {"username": myUser, "account":myaccount, "courselist":courseList(), "sectionlist":sectionList(), "talist":TAlist()})
+        return render(request, "AssignTA.html", {"username": myUser, "account":myaccount, "sectionlist":sectionList(xcourse), "talist":TAlist()})
 
     def post(self, request):
         myUser = request.session["username"]
         myaccount= user.objects.get(email=myUser)
 
-        xcourse = request.POST.get('course')
+        xcourse = request.session['course']
         xsectionnum = request.POST.get('section')
         xta = request.POST.get('ta')
 
-        print(xsectionnum)
-
         mysection = section.objects.get(number=xsectionnum)
-        mysection.ta=xta
+        mysection.ta=user.objects.get(email=xta)
+        print("This is my user")
+        print(user.objects.get(email=xta))
         mysection.save()
-        return render(request, "AssignTA.html", {"succesmsg": "Successfully assigned a TA", "username": myUser, "courselist":courseList(), "sectionlist":sectionList(), "talist":TAlist()})
+
+        functions.maxSectionTally(xta)
+
+        if user.objects.get(email=xta).remainingSection==0:
+            return render(request, "AssignTA.html", {"badmsg": "TA has no available sections", "username": myUser, "sectionlist":sectionList(xcourse), "talist":TAlist()})
+        return render(request, "AssignTA.html", {"successmsg": "Successfully assigned a TA", "username": myUser,
+                                                 "sectionlist": sectionList(xcourse), "talist": TAlist()})
 
 
 class ViewAssignments(View):
