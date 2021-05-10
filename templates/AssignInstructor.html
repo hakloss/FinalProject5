@@ -19,20 +19,20 @@
     <form action="/AssignInstructor/" method="post" class="accountform">
         {% csrf_token %}
         <div class="columnleft">
-            <label for="course">Course:</label><br/>
-            <select id="course" name="course" required>
-                <option value="one">1</option>
-                <option value="two">2</option>
-                <option value="three">3</option>
+            <label for="classname">Course:</label><br/>
+            <select id="classname" name="classname" required>
+                {% for i in courselist %}
+                <option value={{ i }}>{{ i }}</option>
+                {% endfor %}
             </select>
 
         </div>
         <div class="columnright">
             <label for="instructor">Instructor:</label><br/>
             <select id="instructor" name="instructor" required>
-                <option value="one">1</option>
-                <option value="two">2</option>
-                <option value="three">3</option>
+                {% for i in allinstructors %}
+                <option value={{ i }}>{{ i }}</option>
+                {% endfor %}
             </select>
             <input type="submit" value="Save"><br/>
             <div class="successmsg">{{ successmsg }}</div>

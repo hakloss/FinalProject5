@@ -206,7 +206,19 @@ class ViewAccounts(View):
 
 class AssignInstructor(View):
     def get(self, request):
-        return render(request, "AssignInstructor.html")
+        allcourses = (course.objects.values())
+        courselist = []
+        for i in allcourses:
+            courselist.append(i['classname'])
+
+        allusers = (user.objects.values())
+        allinstructors = []
+        for i in allusers:
+            if checkInstructorRole(i['email']):
+                allinstructors.append(i['fname'] + " " + i['lname'])
+
+
+        return render(request, "AssignInstructor.html", {'courselist': courselist, 'allinstructors': allinstructors})
 
     def post(self, request):
         return render(request, "AssignInstructor.html")
