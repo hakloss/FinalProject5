@@ -171,12 +171,9 @@ class AddSection(View):
         for i in allcourses:
             courselist.append(i['classname'])
 
-
-
         xcourse = request.POST.get('course')
         xsectionnum = request.POST.get('number')
         xsectiontime = request.POST.get('time')
-
 
         if functions.duplicateSectionCheck(xsectionnum,xsectiontime,xcourse):
             return render(request, "CreateCourse.html", {"badmsg": "This course already exists", "username": myuser, 'courselist':courselist})
@@ -213,10 +210,26 @@ class AssignInstructor(View):
 
 class AssignTA(View):
     def get(self, request):
-        return render(request, "AssignTA.html")
+        myUser = request.session["username"]
+        myaccount = user.objects.get(email = myUser)
+
+        return render(request, "AssignTA.html", {"username": myUser, "account":myaccount, "courselist":courseList(), "sectionlist":sectionList(), "talist":TAlist()})
 
     def post(self, request):
-        return render(request, "AssignTA.html")
+        myUser = request.session["username"]
+        myaccount= user.objects.get(email=myUser)
+
+        xcourse = request.POST.get('course')
+        xsectionnum = request.POST.get('section')
+        xta = request.POST.get('ta')
+
+        print(xsectionnum)
+
+        mysection = section.objects.get(number=xsectionnum)
+        mysection.ta=xta
+        mysection.save()
+        return render(request, "AssignTA.html", {"succesmsg": "Successfully assigned a TA", "username": myUser, "courselist":courseList(), "sectionlist":sectionList(), "talist":TAlist()})
+
 
 class ViewAssignments(View):
     def get(self, request):

@@ -19,28 +19,28 @@
     <form action="/AssignTA/" method="post" class="onecolform">
         {% csrf_token %}
 
-            <label for="course">Course:</label><br/>
-            <select id="course" name="course" required>
-                <option value="one">1</option>
-                <option value="two">2</option>
-                <option value="three">3</option>
+            <label for="classname">Course:</label><br/>
+            <select id="classname" name="classname" required>
+                {% for i in courselist %}
+                <option value={{ i }}>{{ i }}</option>
+                {% endfor %}
             </select><br/><br/>
 
 
 
             <label for="section">Section:</label><br/>
             <select id="section" name="section" required>
-                <option value="one">1</option>
-                <option value="two">2</option>
-                <option value="three">3</option>
+                {% for i in sectionlist %}
+                <option value={{ i }}>{{ i }}</option>
+                {% endfor %}
             </select><br/><br/>
 
 
             <label for="ta">TA:</label><br/>
             <select id="ta" name="ta" required>
-                <option value="one">1</option>
-                <option value="two">2</option>
-                <option value="three">3</option>
+                {% for i in talist %}
+                <option value={{ i }}>{{ i }}</option>
+                {% endfor %}
             </select><br/><br/>
 
             <input type="submit" value="Save"><br/>
