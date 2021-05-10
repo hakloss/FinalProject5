@@ -236,7 +236,6 @@ class AssignInstructor(View):
         try:
 #            coursename = course.objects.get(classname=request.POST.get('classname'))
             instructor = user.objects.get(fname=request.POST.get('instructor'))
-#            coursename.instructor = instructor
 
             return render(request, "AssignInstructor.html", {'courselist': courselist, 'allinstructors': allinstructors,
                                                              'successmsg': "Instructor was assigned to course"})
