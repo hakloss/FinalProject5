@@ -110,6 +110,65 @@ class TestCheckTAAccount(TestCase):
 
     def test_ta(self):
         self.assertTrue(functions.checkTARole(self.z.email))
+
+class TestTAList(TestCase):
+    def setUp(self):
+        self.x = user(fname="John", lname="Smith", email="email@email.com", role="admin", password="fdjhska;afds;hjk")
+        self.x.save()
+        self.y = user(fname="Joe", lname="Johnson", email="emailOne@password.com", role="TA", password="fdsahjk")
+        self.y.save()
+        self.z = user(fname="Sam", lname="Brown", email="emailTwo@something.com", role="TA", password="jhfkdjsalfhadis")
+        self.z.save()
+
+    def test_retrieveTA(self):
+        self.assertEqual(functions.TAlist(), ["emailOne@password.com","emailTwo@something.com"], msg="should be the same")
+
+    def test_Excludeother(self):
+        self.assertFalse("email@email.com" in functions.TAlist(), msg="admin should not be in list")
+
+class TestcourseList(TestCase):
+    def setUp(self):
+        self.c1 = course(classname="301")
+        self.c1.save()
+        self.c2 = course(classname="302")
+        self.c2.save()
+        self.c3 = course(classname="303")
+        self.c3.save()
+
+    def test_couselist(self):
+        self.assertEqual(functions.courseList(), ["301", "302", "303"], msg="should be the same")
+
+class TestSectionList(TestCase):
+    def setUp(self):
+        self.c1 = course(classname="301")
+        self.c1.save()
+        self.c2 = course(classname="302")
+        self.c2.save()
+        self.c3 = course(classname="303")
+        self.c3.save()
+
+        self.s1 = section(course=self.c1, number="101")
+        self.s1.save()
+        self.s2 = section(course=self.c1, number="102")
+        self.s2.save()
+        self.s3 = section(course=self.c2, number="101")
+        self.s3.save()
+
+    def test_sectionlist(self):
+        self.assertEqual(functions.sectionList("301"), ["101", "102"], msg="should be the same")
+
+class TestRemainingSection(TestCase):
+    def setUp(self):
+        self.x = user(fname="John", lname="Smith", email="email@email.com", role="admin", password="fdjhska;afds;hjk", maxsection=3, remainingSection=3)
+        self.x.save()
+
+    def test_decrement(self):
+        functions.maxSectionTally(self.x.email)
+        print(self.x.remainingSection)
+        self.assertEqual(self.x.remainingSection, 2, msg="should be the same")
+
+
+
 """"
 class TestgetAccount(TestCase):
     def setUp(self):

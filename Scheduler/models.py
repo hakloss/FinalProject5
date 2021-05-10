@@ -15,6 +15,7 @@ class user(models.Model):
     zip = models.CharField(max_length=5, null=True, blank=True)
     pphone = models.CharField(max_length=12, null=True, blank=True)
     wphone = models.CharField(max_length=12, null=True, blank=True)
+    remainingSection = models.IntegerField(default=0, null=True, blank=True)
 
 class course(models.Model):
     classname = models.CharField(max_length=30, default='empty', null=True)

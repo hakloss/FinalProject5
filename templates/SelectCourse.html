@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Assign TA</title>
+    <title>Select Course</title>
     <link rel="stylesheet" type="text/css" href="{% static 'scheduler/style.css' %}" />
 </head>
 <body>
@@ -16,27 +16,19 @@
 
 
 
-    <form action="/AssignTA/" method="post" class="onecolform">
+    <form action="/SelectCourse/" method="post" class="onecolform">
         {% csrf_token %}
 
-            <label for="section">Section:</label><br/>
-            <select id="section" name="section" required>
-                {% for i in sectionlist %}
+            <label for="classname">Course:</label><br/>
+            <select id="classname" name="classname" required>
+                {% for i in courselist %}
                 <option value={{ i }}>{{ i }}</option>
                 {% endfor %}
             </select><br/><br/>
 
-
-            <label for="ta">TA:</label><br/>
-            <select id="ta" name="ta" required>
-                {% for i in talist %}
-                <option value={{ i }}>{{ i }}</option>
-                {% endfor %}
-            </select><br/><br/>
-
-            <input type="submit" name="save" value="Save"><br/>
+            <input type="submit"value="Next"><br/>
             <div class="successmsg">{{ successmsg }}</div>
-            <div class="badmsg">{{ badmsg }}</div>
+
 
     </form>
 
