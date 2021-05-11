@@ -8,7 +8,8 @@ from Scheduler.models import *
 # Create your views here.
 class CreateAccount(View):
     def get(self, request):
-
+        if not checkAdminRole(request.session["username"]):
+            return redirect("/Denied")
         return render(request, "CreateAccount.html")
 
     def post(self, request):
@@ -21,6 +22,8 @@ class CreateAccount(View):
 
 class CreateTA(View):
     def get(self, request):
+        if not checkAdminRole(request.session["username"]):
+            return redirect("/Denied")
         return render(request, "CreateTA.html")
 
     def post(self, request):
@@ -52,6 +55,8 @@ class CreateTA(View):
 
 class CreateOther(View):
     def get(self, request):
+        if not checkAdminRole(request.session["username"]):
+            return redirect("/Denied")
         role=request.session['role']
         return render(request, "CreateOther.html")
 
@@ -83,47 +88,48 @@ class CreateOther(View):
 
 class Home(View):
     def get(self, request):
-        #myuser = request.session["username"]
+
         acc=getAccount(request)
         if acc.role == "admin" or acc.role == "Admin":
-            return redirect("/AdminHome")
+            return redirect("/AdminHome",{"username": myuser(request)})
         elif acc.role == "Instructor" or acc.role == "instructor":
-            return redirect("/InstructorHome")
+            return redirect("/InstructorHome",{"username": myuser(request)})
         else:
-            return redirect("/TAHome")
-        return render(request, "Home.html",{"account":acc, "username":myuser})
+            return redirect("/TAHome",{"username": myuser(request)})
 
-    def post(self, request):
-        myuser = request.session["username"]
-        return render(request, "Home.html",{"username":myuser})
+    def post (self, request):
+        return redirect("/TAHome", {"username": myuser(request)})
 
 class AdminHome(View):
     def get(self, request):
-        return render(request, "AdminHome.html")
+        if not checkAdminRole(myuser(request)):
+            return redirect("/Denied")
+        return render(request, "AdminHome.html", {"username": myuser(request)})
 
     def post(self, request):
-        return render(request, "AdminHome.html")
+        return render(request, "AdminHome.html", {"username": myuser(request)})
 
 class InstructorHome(View):
     def get(self, request):
-        return render(request, "InstructorHome.html")
-
+        if not checkInstructorRole(myuser(request)):
+            return redirect("/Denied")
+        return render(request, "InstructorHome.html",{"username": myuser(request)})
     def post(self, request):
-        return render(request, "InstructorHome.html")
+        return render(request, "InstructorHome.html", {"username": myuser(request)})
 
 class TAHome(View):
     def get(self, request):
-        return render(request, "TAHome.html")
-
+        if not checkTARole(myuser(request)):
+            return redirect("/Denied")
+        return render(request, "TAHome.html",{"username": myuser(request)})
     def post(self, request):
-        return render(request, "TAHome.html")
+        return render(request, "TAHome.html", {"username": myuser(request)})
 
 class Login(View):
     def get(self, request):
-        return render(request, "Login.html",{})
+        return render(request, "Login.html")
 
     def post(self, request):
-        badPassword = False
         try:
             myuser = user.objects.get(email=request.POST["username"])
             badPassword = (myuser.password != request.POST['password'])
@@ -133,38 +139,39 @@ class Login(View):
             return render(request, "Login.html", {"badmsg": "Please enter valid login credentials"})
         else:
             request.session["username"] = myuser.email
-            return redirect("/Home", {"username": myuser})
+            return redirect("/Home",{"username":myuser})
 
 
 class CreateCourse(View):
     def get(self, request):
-        return render(request, "CreateCourse.html")
+        if not checkAdminRole(myuser(request)):
+            return redirect("/Denied")
+        return render(request, "CreateCourse.html",{"username": myuser(request)})
 
     def post(self, request):
         xclassname = request.POST.get('classname')
         if functions.duplicateCourseCheck(xclassname):
-            return render(request, "CreateCourse.html", {"badmsg": "This course already exists"})
+            return render(request, "CreateCourse.html", {"badmsg": "This course already exists", "username": myuser(request)})
 
         xcourse = course(classname=xclassname)
         xcourse.save()
-        return render(request, "CreateCourse.html", {"successmsg": "Course has been created"})
+        return render(request, "CreateCourse.html", {"successmsg": "Course has been created", "username": myuser(request)})
 
 
 class AddSection(View):
     def get(self, request):
-        myuser = request.session["username"]
-        myaccount = user.objects.get(email=myuser)
+        if not checkAdminRole(myuser(request)):
+            return redirect("/Denied")
         allcourses=(course.objects.values())
 
         courselist=[]
         for i in allcourses:
             courselist.append(i['classname'])
 
-        return render(request, "AddSection.html",{"username": myuser, "account":myaccount, 'courselist':courselist})
+        return render(request, "AddSection.html",{'courselist':courselist, "username": myuser(request)})
 
     def post(self, request):
-        myuser = request.session["username"]
-        myaccount = user.objects.get(email=myuser)
+        myaccount = user.objects.get(email=myuser(request))
         allcourses = (course.objects.values())
 
         courselist = []
@@ -176,20 +183,24 @@ class AddSection(View):
         xsectiontime = request.POST.get('time')
 
         if functions.duplicateSectionCheck(xsectionnum,xsectiontime,xcourse):
-            return render(request, "CreateCourse.html", {"badmsg": "This course already exists", "username": myuser, 'courselist':courselist})
+            return render(request, "CreateCourse.html", {"badmsg": "This course already exists", "username": myuser(request), 'courselist':courselist})
         try:
             xcourse = course.objects.get(classname=request.POST.get('classname'))
             xsection = section(time=xsectiontime, number=xsectionnum, course=xcourse)
             xsection.save()
-            return render(request, "AddSection.html", {"successmsg": "Section has been added","username": myuser, 'courselist':courselist})
+            return render(request, "AddSection.html", {"successmsg": "Section has been added","username": myuser(request), 'courselist':courselist})
         except:
-            return render(request, "AddSection.html", {"badmsg": "Section has not been added", "username": myuser, "account":myaccount, 'courselist':courselist})
+            return render(request, "AddSection.html", {"badmsg": "Section has not been added", "username": myuser(request), "account":myaccount, 'courselist':courselist})
 
 class ViewAccounts(View):
     def get(self, request):
-        allaccounts = user.objects.all()
-        acc = functions.getAccount(request)
-        return render(request, "ViewAccounts.html", {'obj':allaccounts, 'account':acc})
+        if checkAdminRole(myuser(request))==True or checkInstructorRole(myuser(request))==True or checkTARole(myuser(request))==True:
+            allaccounts = user.objects.all()
+            acc = functions.getAccount(request)
+            return render(request, "ViewAccounts.html", {'obj':allaccounts, 'account':acc, "username": myuser(request)})
+        else:
+            return redirect("/Denied", {"username": myuser(request)})
+
 
     def post(self, request):
 
@@ -199,42 +210,46 @@ class ViewAccounts(View):
         #delemail=request.POST.get('delemail')
         #allaccounts = user.objects.all()
         #acc = functions.getAccount(request)
-        return render(request, "ViewAccounts.html",{})
+        return render(request, "ViewAccounts.html",{"username": myuser(request)})
 
 class AssignInstructor(View):
     def get(self, request):
-        return render(request, "AssignInstructor.html")
+        if not checkAdminRole(myuser(request)):
+            return redirect("/Denied")
+        return render(request, "AssignInstructor.html",{"username": myuser(request)})
 
     def post(self, request):
-        return render(request, "AssignInstructor.html")
+        if not checkAdminRole(myuser(request)):
+            return redirect("/Denied")
+        return render(request, "AssignInstructor.html", {"username": myuser(request)})
 
 class SelectCourse(View):
     def get(self, request):
-        myUser = request.session["username"]
-        myaccount = user.objects.get(email=myUser)
+        if not checkInstructorRole(myuser(request)):
+            return redirect("/Denied")
 
-        return render(request, "SelectCourse.html",{"username": myUser, "account":myaccount, "courselist":courseList()})
+        return render(request, "SelectCourse.html",{"username": myuser(request), "courselist":courseList()})
 
     def post(self, request):
-        myUser = request.session["username"]
-        myaccount = user.objects.get(email=myUser)
+        if not checkInstructorRole(myuser(request)):
+            return redirect("/Denied")
 
         xcourse = request.POST.get('classname')
         request.session['course'] = xcourse
 
-        return redirect("/AssignTA", {"course": xcourse})
+        return redirect("/AssignTA", {"course": xcourse, "username": myuser(request)})
 
 class AssignTA(View):
     def get(self, request):
-        myUser = request.session["username"]
-        myaccount = user.objects.get(email = myUser)
+        if not checkInstructorRole(myuser(request)):
+            return redirect("/Denied")
         xcourse = request.session['course']
 
-        return render(request, "AssignTA.html", {"username": myUser, "account":myaccount, "sectionlist":sectionList(xcourse), "talist":TAlist()})
+        return render(request, "AssignTA.html", {"username": myuser(request), "sectionlist":sectionList(xcourse), "talist":TAlist()})
 
     def post(self, request):
-        myUser = request.session["username"]
-        myaccount= user.objects.get(email=myUser)
+        if not checkInstructorRole(myuser(request)):
+            return redirect("/Denied")
 
         xcourse = request.session['course']
         xsectionnum = request.POST.get('section')
@@ -242,29 +257,38 @@ class AssignTA(View):
 
         mysection = section.objects.get(number=xsectionnum)
         mysection.ta=user.objects.get(email=xta)
-        print("This is my user")
-        print(user.objects.get(email=xta))
         mysection.save()
 
         functions.maxSectionTally(xta)
 
         if user.objects.get(email=xta).remainingSection==0:
-            return render(request, "AssignTA.html", {"badmsg": "TA has no available sections", "username": myUser, "sectionlist":sectionList(xcourse), "talist":TAlist()})
-        return render(request, "AssignTA.html", {"successmsg": "Successfully assigned a TA", "username": myUser,
+            return render(request, "AssignTA.html", {"badmsg": "TA has no available sections", "username": myuser(request), "sectionlist":sectionList(xcourse), "talist":TAlist()})
+        return render(request, "AssignTA.html", {"successmsg": "Successfully assigned a TA", "username": myuser(request),
                                                  "sectionlist": sectionList(xcourse), "talist": TAlist()})
 
 
 class ViewAssignments(View):
     def get(self, request):
-        return render(request, "ViewAssignments.html",{})
+        if checkAdminRole(myuser(request))==True or checkInstructorRole(myuser(request))==True or checkTARole(myuser(request))==True:
+            allcourses=course.objects.all()
+            allsections=section.objects.all()
+            return render(request, "ViewAssignments.html",{"username": myuser(request), "allcour":allcourses, "allsect":allsections})
+        else:
+            return redirect("/Denied", {"username": myuser(request)})
+
 
     def post(self, request):
-        return render(request, "ViewAssignments.html")
+        return render(request, "ViewAssignments.html",{"username": myuser(request)})
+
 
 class EditAccount(View):
     def get(self, request):
         myuser = request.session["username"]
-        myaccount=user.objects.get(email=myuser)
+        if checkAdminRole(myuser) == True or checkInstructorRole(myuser) == True or checkTARole(myuser) == True:
+            myuser = request.session["username"]
+            myaccount=user.objects.get(email=myuser)
+        else:
+            return redirect("/Denied", {"username": myuser})
 
         return render(request, "EditAccount.html", {"username": myuser, "account":myaccount})
 
@@ -289,6 +313,5 @@ class EditAccount(View):
 
 class Denied(View):
     def get(self, request):
-        return render(request, "denied.html")
-    def post(self, request):
-        return render(request, "denied.html")
+        return render(request, "denied.html",{"username": myuser(request)})
+

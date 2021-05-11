@@ -282,8 +282,6 @@ class HomeRedirect(TestCase):
         self.z = user(fname="Sam", lname="Brown", email="emailTwo@something.com", role="TA", password="jhfkdjsalfhadis")
         self.z.save()
 
-
-
     def test_adminHome(self):
         session = self.client.session
         session['username'] = self.x.email
@@ -304,6 +302,89 @@ class HomeRedirect(TestCase):
         session.save()
         r = self.client.get("/Home",{"account":self.z, "username":self.z.email}, follow=True)
         self.assertRedirects(r, '/TAHome/',status_code=301, target_status_code=200, fetch_redirect_response=True)
+
+class PagePermissions(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.y = user(fname="Joe", lname="Johnson", email="emailOne@password.com", role="Instructor",
+                      password="fdsahjk")
+        self.y.save()
+        self.z = user(fname="Sam", lname="Brown", email="emailTwo@something.com", role="TA", password="jhfkdjsalfhadis")
+        self.z.save()
+        self.s = user(email="strangerdanger@something.com")
+        self.s.save()
+
+    def test_TApermissions(self):
+        session = self.client.session
+        session['username'] = self.z.email
+        session.save()
+        r = self.client.get("/CreateAccount",{"account":self.z, "username":self.z.email}, follow=True)
+        self.assertRedirects(r, '/Denied/',status_code=301, target_status_code=200, fetch_redirect_response=True)
+
+        r2 = self.client.get("/AddSection", {"account": self.z, "username": self.z.email}, follow=True)
+        self.assertRedirects(r2, '/Denied/', status_code=301, target_status_code=200, fetch_redirect_response=True)
+
+        r3 = self.client.get("/AdminHome", {"account": self.z, "username": self.z.email}, follow=True)
+        self.assertRedirects(r3, '/Denied/', status_code=301, target_status_code=200, fetch_redirect_response=True)
+
+        r4 = self.client.get("/AssignTA", {"account": self.z, "username": self.z.email}, follow=True)
+        self.assertRedirects(r4, '/Denied/', status_code=301, target_status_code=200, fetch_redirect_response=True)
+
+        r5 = self.client.get("/CreateCourse", {"account": self.z, "username": self.z.email}, follow=True)
+        self.assertRedirects(r5, '/Denied/', status_code=301, target_status_code=200, fetch_redirect_response=True)
+
+        r6 = self.client.get("/CreateOther", {"account": self.z, "username": self.z.email}, follow=True)
+        self.assertRedirects(r6, '/Denied/', status_code=301, target_status_code=200, fetch_redirect_response=True)
+
+        r7 = self.client.get("/CreateTA", {"account": self.z, "username": self.z.email}, follow=True)
+        self.assertRedirects(r7, '/Denied/', status_code=301, target_status_code=200, fetch_redirect_response=True)
+
+        r8 = self.client.get("/InstructorHome", {"account": self.z, "username": self.z.email}, follow=True)
+        self.assertRedirects(r8, '/Denied/', status_code=301, target_status_code=200, fetch_redirect_response=True)
+
+        r9 = self.client.get("/SelectCourse", {"account": self.z, "username": self.z.email}, follow=True)
+        self.assertRedirects(r9, '/Denied/', status_code=301, target_status_code=200, fetch_redirect_response=True)
+
+    def test_Instructorpermissions(self):
+        session = self.client.session
+        session['username'] = self.y.email
+        session.save()
+        r = self.client.get("/CreateAccount",{"account":self.y, "username":self.y.email}, follow=True)
+        self.assertRedirects(r, '/Denied/',status_code=301, target_status_code=200, fetch_redirect_response=True)
+
+        r2 = self.client.get("/AddSection", {"account": self.y, "username": self.y.email}, follow=True)
+        self.assertRedirects(r2, '/Denied/', status_code=301, target_status_code=200, fetch_redirect_response=True)
+
+        r3 = self.client.get("/AdminHome", {"account": self.y, "username": self.y.email}, follow=True)
+        self.assertRedirects(r3, '/Denied/', status_code=301, target_status_code=200, fetch_redirect_response=True)
+
+        r5 = self.client.get("/CreateCourse", {"account": self.y, "username": self.y.email}, follow=True)
+        self.assertRedirects(r5, '/Denied/', status_code=301, target_status_code=200, fetch_redirect_response=True)
+
+        r6 = self.client.get("/CreateOther", {"account": self.y, "username": self.y.email}, follow=True)
+        self.assertRedirects(r6, '/Denied/', status_code=301, target_status_code=200, fetch_redirect_response=True)
+
+        r7 = self.client.get("/CreateTA", {"account": self.y, "username": self.y.email}, follow=True)
+        self.assertRedirects(r7, '/Denied/', status_code=301, target_status_code=200, fetch_redirect_response=True)
+
+        r8 = self.client.get("/TAHome", {"account": self.y, "username": self.y.email}, follow=True)
+        self.assertRedirects(r8, '/Denied/', status_code=301, target_status_code=200, fetch_redirect_response=True)
+
+    def test_StrangerPermissions(self):
+        session = self.client.session
+        session['username'] = self.s.email
+        session.save()
+        r = self.client.get("/ViewAccounts",{"account":self.s, "username":self.s.email}, follow=True)
+        self.assertRedirects(r, '/Denied/',status_code=301, target_status_code=200, fetch_redirect_response=True)
+
+        r2 = self.client.get("/ViewAssignments", {"account": self.s, "username": self.s.email}, follow=True)
+        self.assertRedirects(r2, '/Denied/', status_code=301, target_status_code=200, fetch_redirect_response=True)
+
+        r3 = self.client.get("/EditAccount", {"account": self.s, "username": self.s.email}, follow=True)
+        self.assertRedirects(r3, '/Denied/', status_code=301, target_status_code=200, fetch_redirect_response=True)
+
+        r5 = self.client.get("/Home", {"account": self.s, "username": self.s.email}, follow=True)
+        self.assertRedirects(r5, '/Denied/', status_code=301, target_status_code=200, fetch_redirect_response=True)
 
 
 
