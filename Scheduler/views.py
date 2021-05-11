@@ -162,35 +162,26 @@ class AddSection(View):
     def get(self, request):
         if not checkAdminRole(myuser(request)):
             return redirect("/Denied")
-        allcourses=(course.objects.values())
 
-        courselist=[]
-        for i in allcourses:
-            courselist.append(i['classname'])
-
-        return render(request, "AddSection.html",{'courselist':courselist, "username": myuser(request)})
+        return render(request, "AddSection.html",{'courselist':courseList(), "username": myuser(request)})
 
     def post(self, request):
         myaccount = user.objects.get(email=myuser(request))
         allcourses = (course.objects.values())
-
-        courselist = []
-        for i in allcourses:
-            courselist.append(i['classname'])
 
         xcourse = request.POST.get('course')
         xsectionnum = request.POST.get('number')
         xsectiontime = request.POST.get('time')
 
         if functions.duplicateSectionCheck(xsectionnum,xsectiontime,xcourse):
-            return render(request, "CreateCourse.html", {"badmsg": "This course already exists", "username": myuser(request), 'courselist':courselist})
+            return render(request, "CreateCourse.html", {"badmsg": "This course already exists", "username": myuser(request), 'courselist':courseList()})
         try:
             xcourse = course.objects.get(classname=request.POST.get('classname'))
             xsection = section(time=xsectiontime, number=xsectionnum, course=xcourse)
             xsection.save()
-            return render(request, "AddSection.html", {"successmsg": "Section has been added","username": myuser(request), 'courselist':courselist})
+            return render(request, "AddSection.html", {"successmsg": "Section has been added","username": myuser(request), 'courselist':courseList()})
         except:
-            return render(request, "AddSection.html", {"badmsg": "Section has not been added", "username": myuser(request), "account":myaccount, 'courselist':courselist})
+            return render(request, "AddSection.html", {"badmsg": "Section has not been added", "username": myuser(request), "account":myaccount, 'courselist':courseList()})
 
 class ViewAccounts(View):
     def get(self, request):
