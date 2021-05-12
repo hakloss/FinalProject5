@@ -33,20 +33,20 @@ def validateEmail(email):
 
 def checkAdminRole(email):
     account = user.objects.get(email=email)
-    if (account.role=="admin"):
+    if (account.role=="admin" or account.role=="Admin"):
         return True
     return False
 
 def checkInstructorRole(email):
     account = user.objects.get(email=email)
-    if (account.role=="instructor"):
+    if (account.role=="instructor" or account.role=="Instructor"):
         return True
     return False
 
 
 def checkTARole(email):
     account = user.objects.get(email=email)
-    if (account.role=="ta"):
+    if (account.role=="ta" or account.role=="TA"):
         return True
     return False
 
@@ -83,8 +83,10 @@ def TAlist():
 
 def maxSectionTally(taEmail):
     myuser=user.objects.get(email=taEmail)
-    print(myuser.remainingSection)
     if myuser.remainingSection>0:
         myuser.remainingSection-=1
         myuser.save()
         print(myuser.remainingSection)
+
+def myuser(request):
+    return request.session["username"]

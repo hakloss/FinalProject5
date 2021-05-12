@@ -42,6 +42,15 @@ thead{
 }
 td, th, thead{
     padding: 5px;
+
+}
+
+caption{
+    text-align: left;
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 18px;
+    font-weight: bold;
+    color:#ffbd00;
 }
 
 .bar {
