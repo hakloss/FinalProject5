@@ -181,12 +181,32 @@ class AddSection(View):
             return render(request, "AddSection.html", {"badmsg": "Section has not been added", "username": myuser, "account":myaccount, 'courselist':courselist})
 
 class ViewAccounts(View):
-    def get(self, request):
+    def get(self, request, **kwargs):
+        if not request.session.get("username"):
+            return redirect("home")
+
         allaccounts = user.objects.all()
-        return render(request, "ViewAccounts.html", {'obj':allaccounts})
+
+        try:
+            deluser = self.kwargs["username"]
+        except KeyError:
+            return render(request, "ViewAccounts.html", {'obj': allaccounts})
+
+        user.objects.filter(email=deluser).delete()
+
+        return render(request, "ViewAccounts.html", {'obj': allaccounts})
 
     def post(self, request):
-        return render(request, "ViewAccounts.html")
+        delname = request.POST['name']
+        print(delname)
+
+        if delname == '':
+            allaccounts = user.objects.all()
+            return render(request, "ViewAccounts.html", {'name': allaccounts})
+
+        allaccounts = user.objects.filter(delname_first=delname)
+        print(allaccounts)
+        return render(request, "ViewAccounts.html", {'name': allaccounts})
 
 class AssignInstructor(View):
     def get(self, request):
