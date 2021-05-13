@@ -53,6 +53,12 @@
     <th>
         Zip
     </th>
+        <th>
+        Max Sections
+    </th>
+        <th>
+        Remaining Sections
+    </th>
 
     <th>
         &nbsp
@@ -75,6 +81,8 @@
                 <td>{{ i.city}}</td>
                 <td>{{ i.state}}</td>
                 <td>{{ i.zip}}</td>
+                <td>{{ i.maxsection}}</td>
+                <td>{{ i.remainingSection}}</td>
                 <td><form action="/ViewAccounts/" method="post">{% csrf_token %}<input type="submit" value="Delete"></form></td></td>
             {% endif %}
 

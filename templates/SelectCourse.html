@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Create Course</title>
+    <title>Select Course</title>
     <link rel="stylesheet" type="text/css" href="{% static 'scheduler/style.css' %}" />
 </head>
 <body>
@@ -14,19 +14,25 @@
 </div>
 <p class="homelink"><a href="/Home/">Home</a></p>
 
-<div class="row">
 
-    <form action="/CreateCourse/" method="post" class="onecolform">
+
+    <form action="/SelectCourse/" method="post" class="onecolform">
         {% csrf_token %}
-        <div class="columncenter">
 
             <label for="classname">Course:</label><br/>
-            <input type="text" id="classname" name="classname" required><br/><br/>
+            <select id="classname" name="classname" required>
+                {% for i in courselist %}
+                <option value={{ i }}>{{ i }}</option>
+                {% endfor %}
+            </select><br/><br/>
 
-            <input type="submit" value="Create"><br/>
+            <input type="submit"value="Next"><br/>
             <div class="successmsg">{{ successmsg }}</div>
-            <div class="badmsg">{{ badmsg }}</div>
+
+
     </form>
+
 </div>
+
 </body>
 </html>

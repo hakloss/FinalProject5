@@ -15,6 +15,29 @@
 <p class="homelink"><a href="/Home/">Home</a></p>
 
 <table border="1">
+<caption>Instructor assignments</caption>
+    <thead>
+    <th>
+        Course
+    </th>
+    <th>
+        Instructor
+    </th>
+
+
+    </thead>
+    <tbody>
+    {% for i in allcour %}
+        <tr>
+            <td>{{ i.classname }}</td>
+            <td>{{ i.instructor }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+<br/>
+<table border="1">
+<caption>TA assignments</caption>
     <thead>
     <th>
         Course
@@ -23,23 +46,21 @@
         Section
     </th>
     <th>
-        Instructor
+        Time
     </th>
     <th>
         TA
     </th>
 
+
     </thead>
     <tbody>
-    {% for i in obj %}
+    {% for i in allsect %}
         <tr>
-            <td>{{ i.course }}</td>
-            <td>{{ i.section }}</td>
-            <td>{{ i.instructor}}</td>
-            <td>{{ i.ta}}</td>
-
-
-
+            <td>{{ i.course.classname }}</td>
+            <td>{{ i.number }}</td>
+            <td>{{ i.time }}</td>
+            <td>{{ i.ta.fname }} {{ i.ta.lname }}</td>
         </tr>
     {% endfor %}
     </tbody>

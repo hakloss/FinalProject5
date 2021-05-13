@@ -14,7 +14,6 @@
 </div>
 <p class="homelink"><a href="/Home/">Home</a></p>
 
-<h1>User: {{ username }}</h1>
 
 <div class="row">
     <form action="/EditAccount/" method="post" class="accountform">
@@ -94,7 +93,7 @@
                 <option value="WI">WI</option>
                 <option value="WV">WV</option>
                 <option value="WY">WY</option>
-            </select>
+            </select><br/><br/>
 
             <label for="zip">ZIP:</label><br/>
             <input type="text" id="zip" name="zip" value={{ account.zip }}><br/><br/>

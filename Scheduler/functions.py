@@ -33,20 +33,20 @@ def validateEmail(email):
 
 def checkAdminRole(email):
     account = user.objects.get(email=email)
-    if (account.role=="admin"):
+    if (account.role=="admin" or account.role=="Admin"):
         return True
     return False
 
 def checkInstructorRole(email):
     account = user.objects.get(email=email)
-    if (account.role=="instructor"):
+    if (account.role=="instructor" or account.role=="Instructor"):
         return True
     return False
 
 
 def checkTARole(email):
     account = user.objects.get(email=email)
-    if (account.role=="ta"):
+    if (account.role=="ta" or account.role=="TA"):
         return True
     return False
 
@@ -54,3 +54,39 @@ def getAccount(request):
     myuser = request.session["username"]
     myaccount = user.objects.get(email=myuser)
     return myaccount
+
+def sectionList(xcourse):
+    sectionlist = []
+    courseobj=course.objects.get(classname=xcourse)
+    allsections = (section.objects.values())
+    for i in allsections:
+        if i.get("course_id","default")==courseobj.id:
+            sectionlist.append(i["number"])
+    return sectionlist
+
+def courseList():
+    allcourses = (course.objects.values())
+    courselist = []
+    for i in allcourses:
+        courselist.append(i['classname'])
+    return courselist
+
+def TAlist():
+    allusers = (user.objects.values())
+    talist = []
+    for i in allusers:
+        if i.get("role", "default") == "ta" or i.get("role", "default") == "TA":
+            taname = i.get("email", "default")
+            talist.append(taname)
+    print(talist)
+    return talist
+
+def maxSectionTally(taEmail):
+    myuser=user.objects.get(email=taEmail)
+    if myuser.remainingSection>0:
+        myuser.remainingSection-=1
+        myuser.save()
+        print(myuser.remainingSection)
+
+def myuser(request):
+    return request.session["username"]
