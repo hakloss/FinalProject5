@@ -220,7 +220,7 @@ class ViewAccounts(View):
 
 class AssignInstructor(View):
     def get(self, request):
-        if not checkAdminRole(request.session["username"]):
+        if not checkAdminRole(myuser(request)):
             return redirect("/Denied")
         allcourses = (course.objects.values())
         courselist = []
