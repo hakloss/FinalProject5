@@ -234,8 +234,12 @@ class AssignInstructor(View):
                 allinstructors.append(i['fname'])
 
         try:
-#            coursename = course.objects.get(classname=request.POST.get('classname'))
+            classname = request.POST.get('classname')
+            coursename = course.objects.get(classname=classname)
             instructor = user.objects.get(fname=request.POST.get('instructor'))
+
+            coursename.instructor = instructor
+            coursename.save()
 
             return render(request, "AssignInstructor.html", {'courselist': courselist, 'allinstructors': allinstructors,
                                                              'successmsg': "Instructor was assigned to course"})
