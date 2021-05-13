@@ -190,11 +190,11 @@ class ViewAccounts(View):
         try:
             deluser = self.kwargs["username"]
         except KeyError:
-            return render(request, "ViewAccounts.html", {'obj': allaccounts})
+            return render(request, "ViewAccounts.html", {"badmsg": "Account has not been deleted", 'obj': allaccounts})
 
         user.objects.filter(email=deluser).delete()
 
-        return render(request, "ViewAccounts.html", {'obj': allaccounts})
+        return render(request, "ViewAccounts.html", {"successmsg": "Account has been deleted", 'obj': allaccounts})
 
     def post(self, request):
         delname = request.POST['name']
