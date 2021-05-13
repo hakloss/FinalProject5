@@ -220,7 +220,8 @@ class ViewAccounts(View):
 
 class AssignInstructor(View):
     def get(self, request):
-
+        if not checkAdminRole(request.session["username"]):
+            return redirect("/Denied")
         allcourses = (course.objects.values())
         courselist = []
         for i in allcourses:
@@ -230,10 +231,9 @@ class AssignInstructor(View):
         allinstructors = []
         for i in allusers:
             if checkInstructorRole(i['email']):
-                #allinstructors.append(i['fname'] + " " + i['lname'])
                 allinstructors.append(i['fname'])
 
-        return render(request, "AssignInstructor.html", {'courselist': courselist, 'allinstructors': allinstructors})
+        return render(request, "AssignInstructor.html", {'courselist': courselist, 'allinstructors': allinstructors, "username":myuser(request)})
 
     def post(self, request):
         if not checkAdminRole(myuser(request)):
@@ -260,13 +260,11 @@ class AssignInstructor(View):
             coursename.save()
 
             return render(request, "AssignInstructor.html", {'courselist': courselist, 'allinstructors': allinstructors,
-                                                             'successmsg': "Instructor was assigned to course"})
+                                                             'successmsg': "Instructor was assigned to course", "username":myuser(request)})
 
         except:
             return render(request, "AssignInstructor.html", {'courselist': courselist, 'allinstructors': allinstructors,
-                                                             'badmsg': "Instructor was not assigned to course"})
-
-
+                                                             'badmsg': "Instructor was not assigned to course", "username":myuser(request)})
 
 
 class SelectCourse(View):
