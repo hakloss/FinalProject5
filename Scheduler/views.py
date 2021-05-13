@@ -205,6 +205,49 @@ class ViewAccounts(View):
 
 class AssignInstructor(View):
     def get(self, request):
+
+        allcourses = (course.objects.values())
+        courselist = []
+        for i in allcourses:
+            courselist.append(i['classname'])
+
+        allusers = (user.objects.values())
+        allinstructors = []
+        for i in allusers:
+            if checkInstructorRole(i['email']):
+                #allinstructors.append(i['fname'] + " " + i['lname'])
+                allinstructors.append(i['fname'])
+
+        return render(request, "AssignInstructor.html", {'courselist': courselist, 'allinstructors': allinstructors})
+
+    def post(self, request):
+        allcourses = (course.objects.values())
+        courselist = []
+        for i in allcourses:
+            courselist.append(i['classname'])
+
+        allusers = (user.objects.values())
+        allinstructors = []
+        for i in allusers:
+            if checkInstructorRole(i['email']):
+#                allinstructors.append(i['fname'] + " " + i['lname'])
+                allinstructors.append(i['fname'])
+
+        try:
+            classname = request.POST.get('classname')
+            coursename = course.objects.get(classname=classname)
+            instructor = user.objects.get(fname=request.POST.get('instructor'))
+
+            coursename.instructor = instructor
+            coursename.save()
+
+            return render(request, "AssignInstructor.html", {'courselist': courselist, 'allinstructors': allinstructors,
+                                                             'successmsg': "Instructor was assigned to course"})
+
+        except:
+            return render(request, "AssignInstructor.html", {'courselist': courselist, 'allinstructors': allinstructors,
+                                                             'badmsg': "Instructor was not assigned to course"})
+
         if not checkAdminRole(myuser(request)):
             return redirect("/Denied")
         return render(request, "AssignInstructor.html",{"username": myuser(request)})
@@ -229,6 +272,7 @@ class SelectCourse(View):
         request.session['course'] = xcourse
 
         return redirect("/AssignTA", {"course": xcourse, "username": myuser(request)})
+
 
 class AssignTA(View):
     def get(self, request):
