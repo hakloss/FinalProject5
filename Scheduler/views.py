@@ -218,7 +218,8 @@ class AssignInstructor(View):
         try:
             classname = request.POST.get('classname')
             coursename = course.objects.get(classname=classname)
-            instructor = user.objects.get(fname=request.POST.get('instructor'))
+            lastname = getLastName(request.POST.get('instructor'))
+            instructor = user.objects.get(lname=lastname)
 
             coursename.instructor = instructor
             coursename.save()
@@ -262,15 +263,17 @@ class AssignTA(View):
 
         xcourse = request.session['course']
         xsectionnum = request.POST.get('section')
-        xta = request.POST.get('ta')
+        lastName = getLastName(request.POST.get('ta'))
+        print(request.POST.get('ta'))
+        print(lastName)
 
         mysection = section.objects.get(number=xsectionnum)
-        mysection.ta=user.objects.get(email=xta)
+        mysection.ta = user.objects.get(lname=lastName)
         mysection.save()
 
-        functions.maxSectionTally(xta)
+        functions.maxSectionTally(lastName)
 
-        if user.objects.get(email=xta).remainingSection==0:
+        if user.objects.get(lname=lastName).remainingSection==0:
             return render(request, "AssignTA.html", {"badmsg": "TA has no available sections", "username": myuser(request), "sectionlist":sectionList(xcourse), "talist":TAlist()})
         return render(request, "AssignTA.html", {"successmsg": "Successfully assigned a TA", "username": myuser(request),
                                                  "sectionlist": sectionList(xcourse), "talist": TAlist()})
