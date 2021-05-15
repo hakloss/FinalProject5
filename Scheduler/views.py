@@ -263,17 +263,15 @@ class AssignTA(View):
 
         xcourse = request.session['course']
         xsectionnum = request.POST.get('section')
-        lastName = getLastName(request.POST.get('ta'))
-        print(request.POST.get('ta'))
-        print(lastName)
+        xta = request.POST.get('ta')
 
         mysection = section.objects.get(number=xsectionnum)
-        mysection.ta = user.objects.get(lname=lastName)
+        mysection.ta=user.objects.get(email=xta)
         mysection.save()
 
-        functions.maxSectionTally(lastName)
+        functions.maxSectionTally(xta)
 
-        if user.objects.get(lname=lastName).remainingSection==0:
+        if user.objects.get(email=xta).remainingSection==0:
             return render(request, "AssignTA.html", {"badmsg": "TA has no available sections", "username": myuser(request), "sectionlist":sectionList(xcourse), "talist":TAlist()})
         return render(request, "AssignTA.html", {"successmsg": "Successfully assigned a TA", "username": myuser(request),
                                                  "sectionlist": sectionList(xcourse), "talist": TAlist()})

@@ -75,8 +75,10 @@ def TAlist():
     allusers = (user.objects.values())
     talist = []
     for i in allusers:
-        if checkTARole(i['email']):
-            talist.append(i['fname'] + " " + i['lname'])
+        if i.get("role", "default") == "ta" or i.get("role", "default") == "TA":
+            taname = i.get("email", "default")
+            talist.append(taname)
+    print(talist)
     return talist
 
 def instructorList():
@@ -87,8 +89,8 @@ def instructorList():
             allinstructors.append(i['fname'] + " " + i['lname'])
     return allinstructors
 
-def maxSectionTally(lastName):
-    myuser=user.objects.get(lname=lastName)
+def maxSectionTally(taEmail):
+    myuser=user.objects.get(email=taEmail)
     if myuser.remainingSection>0:
         myuser.remainingSection-=1
         myuser.save()
