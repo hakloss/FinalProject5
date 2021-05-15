@@ -206,6 +206,10 @@ class ViewAccounts(View):
 class AssignInstructor(View):
     def get(self, request):
 
+        if not checkAdminRole(myuser(request)):
+            return redirect("/Denied")
+        return render(request, "AssignInstructor.html",{"username": myuser(request)})
+
         allcourses = (course.objects.values())
         courselist = []
         for i in allcourses:
@@ -215,12 +219,18 @@ class AssignInstructor(View):
         allinstructors = []
         for i in allusers:
             if checkInstructorRole(i['email']):
-                #allinstructors.append(i['fname'] + " " + i['lname'])
-                allinstructors.append(i['fname'])
+                allinstructors.append(i['fname'] + " " + i['lname'])
+
 
         return render(request, "AssignInstructor.html", {'courselist': courselist, 'allinstructors': allinstructors})
 
     def post(self, request):
+
+        if not checkAdminRole(myuser(request)):
+            return redirect("/Denied")
+        return render(request, "AssignInstructor.html", {"username": myuser(request)})
+
+
         allcourses = (course.objects.values())
         courselist = []
         for i in allcourses:
@@ -230,8 +240,8 @@ class AssignInstructor(View):
         allinstructors = []
         for i in allusers:
             if checkInstructorRole(i['email']):
-#                allinstructors.append(i['fname'] + " " + i['lname'])
-                allinstructors.append(i['fname'])
+                allinstructors.append(i['fname'] + " " + i['lname'])
+
 
         try:
             classname = request.POST.get('classname')
@@ -248,14 +258,6 @@ class AssignInstructor(View):
             return render(request, "AssignInstructor.html", {'courselist': courselist, 'allinstructors': allinstructors,
                                                              'badmsg': "Instructor was not assigned to course"})
 
-    #     if not checkAdminRole(myuser(request)):
-    #         return redirect("/Denied")
-    #     return render(request, "AssignInstructor.html",{"username": myuser(request)})
-    #
-    # def post(self, request):
-    #     if not checkAdminRole(myuser(request)):
-    #         return redirect("/Denied")
-    #     return render(request, "AssignInstructor.html", {"username": myuser(request)})
 
 class SelectCourse(View):
     def get(self, request):
