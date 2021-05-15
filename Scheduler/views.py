@@ -208,40 +208,12 @@ class AssignInstructor(View):
 
         if not checkAdminRole(myuser(request)):
             return redirect("/Denied")
-        return render(request, "AssignInstructor.html",{"username": myuser(request)})
-
-        allcourses = (course.objects.values())
-        courselist = []
-        for i in allcourses:
-            courselist.append(i['classname'])
-
-        allusers = (user.objects.values())
-        allinstructors = []
-        for i in allusers:
-            if checkInstructorRole(i['email']):
-                allinstructors.append(i['fname'] + " " + i['lname'])
-
-
-        return render(request, "AssignInstructor.html", {'courselist': courselist, 'allinstructors': allinstructors})
+        return render(request, "AssignInstructor.html", {'courselist':courseList(), 'allinstructors': instructorList()})
 
     def post(self, request):
 
         if not checkAdminRole(myuser(request)):
             return redirect("/Denied")
-        return render(request, "AssignInstructor.html", {"username": myuser(request)})
-
-
-        allcourses = (course.objects.values())
-        courselist = []
-        for i in allcourses:
-            courselist.append(i['classname'])
-
-        allusers = (user.objects.values())
-        allinstructors = []
-        for i in allusers:
-            if checkInstructorRole(i['email']):
-                allinstructors.append(i['fname'] + " " + i['lname'])
-
 
         try:
             classname = request.POST.get('classname')
@@ -251,11 +223,11 @@ class AssignInstructor(View):
             coursename.instructor = instructor
             coursename.save()
 
-            return render(request, "AssignInstructor.html", {'courselist': courselist, 'allinstructors': allinstructors,
+            return render(request, "AssignInstructor.html", {'courselist':courseList(), 'allinstructors': instructorList(),
                                                              'successmsg': "Instructor was assigned to course"})
 
         except:
-            return render(request, "AssignInstructor.html", {'courselist': courselist, 'allinstructors': allinstructors,
+            return render(request, "AssignInstructor.html", {'courselist':courseList(), 'allinstructors': instructorList(),
                                                              'badmsg': "Instructor was not assigned to course"})
 
 
