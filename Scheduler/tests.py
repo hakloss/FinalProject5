@@ -5,6 +5,23 @@ from Scheduler.models import *
 
 
 # Create your tests here.
+class TestGetLastName(TestCase):
+    def setUp(self):
+        self.x = "John Joe"
+        self.y = "Jeff"
+        self.z = "Sara Johnson"
+
+    def test_name(self):
+        self.assertEqual(functions.getLastName(self.x), "Joe")
+
+    def test_oneName(self):
+        self.assertEqual(functions.getLastName(self.y), "Jeff")
+
+    def test_firstName(self):
+        self.assertFalse(functions.getLastName((self.z)) == "Sara")
+
+
+
 
 class TestDuplicateAccount(TestCase):
     def setUp(self):

@@ -90,3 +90,12 @@ def maxSectionTally(taEmail):
 
 def myuser(request):
     return request.session["username"]
+
+#if the string only has one name (first or last) it treats it as last, otherwise returns 0
+def getLastName(fullName):
+    namelist = fullName.split(" ")
+    namelist.reverse()
+    if len(namelist) >= 1:
+        return namelist[0]
+    else:
+        return ""

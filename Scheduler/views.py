@@ -248,14 +248,14 @@ class AssignInstructor(View):
             return render(request, "AssignInstructor.html", {'courselist': courselist, 'allinstructors': allinstructors,
                                                              'badmsg': "Instructor was not assigned to course"})
 
-        if not checkAdminRole(myuser(request)):
-            return redirect("/Denied")
-        return render(request, "AssignInstructor.html",{"username": myuser(request)})
-
-    def post(self, request):
-        if not checkAdminRole(myuser(request)):
-            return redirect("/Denied")
-        return render(request, "AssignInstructor.html", {"username": myuser(request)})
+    #     if not checkAdminRole(myuser(request)):
+    #         return redirect("/Denied")
+    #     return render(request, "AssignInstructor.html",{"username": myuser(request)})
+    #
+    # def post(self, request):
+    #     if not checkAdminRole(myuser(request)):
+    #         return redirect("/Denied")
+    #     return render(request, "AssignInstructor.html", {"username": myuser(request)})
 
 class SelectCourse(View):
     def get(self, request):
