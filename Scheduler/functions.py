@@ -81,6 +81,14 @@ def TAlist():
     print(talist)
     return talist
 
+def instructorList():
+    allusers = (user.objects.values())
+    allinstructors = []
+    for i in allusers:
+        if checkInstructorRole(i['email']):
+            allinstructors.append(i['fname'] + " " + i['lname'])
+    return allinstructors
+
 def maxSectionTally(taEmail):
     myuser=user.objects.get(email=taEmail)
     if myuser.remainingSection>0:
@@ -90,3 +98,12 @@ def maxSectionTally(taEmail):
 
 def myuser(request):
     return request.session["username"]
+
+#if the string only has one name (first or last) it treats it as last, otherwise returns 0
+def getLastName(fullName):
+    namelist = fullName.split(" ")
+    namelist.reverse()
+    if len(namelist) >= 1:
+        return namelist[0]
+    else:
+        return ""
