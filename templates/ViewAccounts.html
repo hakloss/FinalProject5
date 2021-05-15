@@ -63,10 +63,13 @@
     <th>
         &nbsp
     </th>
+
     {% endif %}
     </thead>
     <tbody>
     {% for i in obj %}
+        <form action = "{%  url 'ViewAccounts' %}" method="post">
+        {% csrf_token %}
         <tr>
             <td>{{ i.fname }}</td>
             <td>{{ i.lname }}</td>
@@ -83,12 +86,14 @@
                 <td>{{ i.zip}}</td>
                 <td>{{ i.maxsection}}</td>
                 <td>{{ i.remainingSection}}</td>
-                <td><form action="/ViewAccounts/" method="post">{% csrf_token %}<input type="submit" value="Delete"></form></td></td>
+                <td><a href="{% url 'ViewAccounts' username=i.email %}">Delete</a></td>
             {% endif %}
 
 
 
         </tr>
+        </form>
     {% endfor %}
     </tbody>
+
 </table>

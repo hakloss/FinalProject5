@@ -10,21 +10,21 @@ class CreateAccount(View):
     def get(self, request):
         if not checkAdminRole(request.session["username"]):
             return redirect("/Denied")
-        return render(request, "CreateAccount.html")
+        return render(request, "CreateAccount.html", {"username": myuser(request)})
 
     def post(self, request):
         xrole = request.POST.get('role')
         request.session['role'] = xrole
         if xrole=="TA":
-            return redirect("/CreateTA")
+            return redirect("/CreateTA", {"username": myuser(request)})
         else:
-            return redirect("/CreateOther",{'role':xrole})
+            return redirect("/CreateOther",{'role':xrole, "username": myuser(request)})
 
 class CreateTA(View):
     def get(self, request):
         if not checkAdminRole(request.session["username"]):
             return redirect("/Denied")
-        return render(request, "CreateTA.html")
+        return render(request, "CreateTA.html", {"username": myuser(request)})
 
     def post(self, request):
         xfname = request.POST.get('fname')
@@ -42,15 +42,15 @@ class CreateTA(View):
         xremainingSection=request.POST.get('maxsection')
 
         if not functions.validateEmail(xemail):
-            return render(request, "CreateTA.html", {"badmsg": "Please enter a valid email"})
+            return render(request, "CreateTA.html", {"badmsg": "Please enter a valid email", "username": myuser(request)})
         if functions.duplicateUserCheck(xemail):
-            return render(request, "CreateTA.html", {"badmsg": "An account for this email already exists"})
+            return render(request, "CreateTA.html", {"badmsg": "An account for this email already exists", "username": myuser(request)})
 
         account = user(fname=xfname, lname=xlname, email=xemail, password=xpassword, role="TA", maxsection=xmaxsection, skills=xskills,
                        address=xaddress, city=xcity, state=xstate, zip=xzip, pphone=xpphone, wphone=xwphone, remainingSection=xremainingSection)
         account.save()
 
-        return render(request, "CreateTA.html", {"successmsg":"Account has been created"})
+        return render(request, "CreateTA.html", {"successmsg":"Account has been created","username": myuser(request)})
 
 
 class CreateOther(View):
@@ -58,7 +58,7 @@ class CreateOther(View):
         if not checkAdminRole(request.session["username"]):
             return redirect("/Denied")
         role=request.session['role']
-        return render(request, "CreateOther.html")
+        return render(request, "CreateOther.html", {"username": myuser(request)})
 
     def post(self, request):
         xfname = request.POST.get('fname')
@@ -75,14 +75,14 @@ class CreateOther(View):
         xrole = request.session['role']
 
         if not functions.validateEmail(xemail):
-            return render(request, "CreateOther.html", {"badmsg": "Please enter a valid email"})
+            return render(request, "CreateOther.html", {"badmsg": "Please enter a valid email","username": myuser(request)})
         if functions.duplicateUserCheck(xemail):
-            return render(request, "CreateOther.html", {"badmsg": "An account for this email already exists"})
+            return render(request, "CreateOther.html", {"badmsg": "An account for this email already exists","username": myuser(request)})
 
         account = user(fname=xfname, lname=xlname, email=xemail, password=xpassword, role=xrole,
                        address=xaddress, city=xcity, state=xstate, zip=xzip, pphone=xpphone, wphone=xwphone)
         account.save()
-        return render(request, "CreateOther.html", {"successmsg":"Account has been created"})
+        return render(request, "CreateOther.html", {"successmsg":"Account has been created", "username": myuser(request)})
 
 
 
@@ -184,24 +184,39 @@ class AddSection(View):
             return render(request, "AddSection.html", {"badmsg": "Section has not been added", "username": myuser(request), "account":myaccount, 'courselist':courseList()})
 
 class ViewAccounts(View):
-    def get(self, request):
-        if checkAdminRole(myuser(request))==True or checkInstructorRole(myuser(request))==True or checkTARole(myuser(request))==True:
+    def get(self, request, **kwargs):
+        if checkAdminRole(myuser(request)) == True or checkInstructorRole(myuser(request)) == True or checkTARole(
+                myuser(request)) == True:
+            if not request.session.get("username"):
+                return redirect("home")
+
+            myacc=user.objects.get(email=myuser(request))
             allaccounts = user.objects.all()
-            acc = functions.getAccount(request)
-            return render(request, "ViewAccounts.html", {'obj':allaccounts, 'account':acc, "username": myuser(request)})
+
+            try:
+                deluser = self.kwargs["username"]
+            except KeyError:
+                return render(request, "ViewAccounts.html", {"badmsg": "Account has not been deleted", 'obj': allaccounts,"username": myuser(request), "account":myacc})
+
+            user.objects.filter(email=deluser).delete()
+
+            return render(request, "ViewAccounts.html", {"successmsg": "Account has been deleted", 'obj': allaccounts,"username": myuser(request), "account":myacc})
         else:
-            return redirect("/Denied", {"username": myuser(request)})
+            return redirect("/Denied")
 
 
     def post(self, request):
+        myacc = user.objects.get(myuser(request))
+        delname = request.POST['name']
+        print(delname)
 
-        #delemail2=get_object_or_404(user, pk=delemail)
-        #a = user.objects.get(email=myuser)
-        #a.delete()
-        #delemail=request.POST.get('delemail')
-        #allaccounts = user.objects.all()
-        #acc = functions.getAccount(request)
-        return render(request, "ViewAccounts.html",{"username": myuser(request)})
+        if delname == '':
+            allaccounts = user.objects.all()
+            return render(request, "ViewAccounts.html", {'name': allaccounts, "account":myacc, "username": myuser(request)})
+
+        allaccounts = user.objects.filter(delname_first=delname)
+        print(allaccounts)
+        return render(request, "ViewAccounts.html", {'name': allaccounts, "account":myacc, "username": myuser(request)})
 
 class AssignInstructor(View):
     def get(self, request):
@@ -230,7 +245,6 @@ class AssignInstructor(View):
         except:
             return render(request, "AssignInstructor.html", {'courselist':courseList(), 'allinstructors': instructorList(),
                                                              'badmsg': "Instructor was not assigned to course"})
-
 
 class SelectCourse(View):
     def get(self, request):
