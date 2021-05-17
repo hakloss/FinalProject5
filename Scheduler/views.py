@@ -216,7 +216,7 @@ class ViewAccounts(View):
 
         allaccounts = user.objects.filter(delname_first=delname)
         print(allaccounts)
-        return render(request, "ViewAccounts.html", {'name': allaccounts, "account":myacc, "username": myuser(request)})
+        return render(request, "ViewAccounts.html", {'name': allaccounts, "account":myacc, "username": myuser(request), "successmsg": "User deleted"})
 
 class AssignInstructor(View):
     def get(self, request):
@@ -279,14 +279,17 @@ class AssignTA(View):
         xsectionnum = request.POST.get('section')
         xta = request.POST.get('ta')
 
+        myta=user.objects.get(email=xta)
+
+        if functions.maxSectionTally(xta)==myta.maxsection:
+            return render(request, "AssignTA.html", {"badmsg": "TA has no available sections", "username": myuser(request), "sectionlist":sectionList(xcourse), "talist":TAlist()})
+
         mysection = section.objects.get(number=xsectionnum)
-        mysection.ta=user.objects.get(email=xta)
+        mysection.ta = user.objects.get(email=xta)
         mysection.save()
 
-        functions.maxSectionTally(xta)
+        functions.deductSection(xta)
 
-        if user.objects.get(email=xta).remainingSection==0:
-            return render(request, "AssignTA.html", {"badmsg": "TA has no available sections", "username": myuser(request), "sectionlist":sectionList(xcourse), "talist":TAlist()})
         return render(request, "AssignTA.html", {"successmsg": "Successfully assigned a TA", "username": myuser(request),
                                                  "sectionlist": sectionList(xcourse), "talist": TAlist()})
 

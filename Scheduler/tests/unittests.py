@@ -27,13 +27,13 @@ class TestDuplicateAccount(TestCase):
     def setUp(self):
         self.acc = user(fname="Haley", lname="K", email="hajaroch@uwm.edu", password="pass", role="TA")
         self.acc.save()
-        self.acc2 = user(fname="Haley", lname="K", email="hajaroch@uwm.edu", password="pass", role="TA")
+
 
     def test_duplicate(self):
         self.assertEqual(True, functions.duplicateUserCheck("hajaroch@uwm.edu"), msg="Account already exists")
 
     def test_noDuplicate(self):
-        self.assertEqual(functions.duplicateUserCheck(self.acc2.email), False, msg="Not a duplicate")
+        self.assertEqual(functions.duplicateUserCheck("email@email.com"), False, msg="Not a duplicate")
 
 
 class TestDuplicateCourse(unittest.TestCase):
@@ -174,32 +174,52 @@ class TestSectionList(TestCase):
     def test_sectionlist(self):
         self.assertEqual(functions.sectionList("301"), ["101", "102"], msg="should be the same")
 
-class TestRemainingSection(TestCase):
+class TestMaxSectionTally(TestCase):
     def setUp(self):
-        self.x = user(fname="John", lname="Smith", email="email@email.com", role="admin", password="fdjhska;afds;hjk", maxsection=3, remainingSection=3)
-        self.x.save()
+
+        self.y = user(fname="Joe", lname="Johnson", email="emailOne@password.com", role="TA", password="fdsahjk")
+        self.y.save()
+        self.z = user(fname="Sam", lname="Brown", email="emailTwo@something.com", role="TA", password="jhfkdjsalfhadis")
+        self.z.save()
+
+        self.c=course(classname="CS361")
+        self.c.save()
+
+        self.s=section(course=self.c, number="101", ta=self.y)
+        self.s.save()
+        self.s1 = section(course=self.c, number="102", ta=self.y)
+        self.s1.save()
+        self.s2 = section(course=self.c, number="103", ta=self.z)
+        self.s2.save()
+
+    def test_count(self):
+        self.assertEqual(functions.maxSectionTally(self.y.email), 2, msg="should be the same")
+
+
+class TestDecrement(TestCase):
+    def setUp(self):
+
+        self.y = user(fname="Joe", lname="Johnson", email="emailOne@password.com", role="TA", password="fdsahjk", maxsection=3, remainingSection=1)
+        self.y.save()
+        self.z = user(fname="Sam", lname="Brown", email="emailTwo@something.com", role="TA", password="jhfkdjsalfhadis", maxsection=1, remainingSection=0)
+        self.z.save()
+
+        self.c=course(classname="CS361")
+        self.c.save()
+
+        self.s=section(course=self.c, number="101", ta=self.y)
+        self.s.save()
+        self.s1 = section(course=self.c, number="102", ta=self.y)
+        self.s1.save()
+        self.s2 = section(course=self.c, number="103", ta=self.z)
+        self.s2.save()
 
     def test_decrement(self):
-        functions.maxSectionTally(self.x.email)
-        print(self.x.remainingSection)
-        self.assertEqual(self.x.remainingSection, 2, msg="should be the same")
+        functions.deductSection(self.y.email)
+        self.assertEqual(self.y.remainingSection, 0, msg="should be the same")
 
-
-
-""""
-class TestgetAccount(TestCase):
-    def setUp(self):
-        self.x = user(fname="John", lname="Smith", email="email@email.com", role="admin", password="fdjhska;afds;hjk")
-        self.x.save()
-
-        session = self.client.session
-        session['username'] = self.x.email
-        session.save()
-
-    def test_returnAccount(self):
-        r = self.client.post('/', {"username": self.x.email}, follow=True)
-        self.assertEqual(functions.getAccount(r), "email@email.com", msg="returns primary key for acount")
-"""
-
+    def test_deductZero(self):
+        functions.deductSection(self.z.email)
+        self.assertEqual(self.z.remainingSection, 0, msg="should go below zero")
 
 

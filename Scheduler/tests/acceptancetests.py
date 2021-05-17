@@ -26,13 +26,14 @@ class Login(TestCase):
 class CreateAccount(TestCase):
     def setUp(self):
         self.client = Client()
-        self.x = user(fname="Haley", lname="K", email="test@email.com", password="password", address="123 street",
+        self.x = user(fname="Haley", lname="K", email="test@email.com", password="password", role="Admin", address="123 street",
                       city="Milwaukee", state="WI", zip="55555", pphone="555-555-5555", wphone="555-555-5555")
         self.x.save()
 
     def test_validAccount(self):
         session = self.client.session
-        session['role'] = 'Admin'
+        session['role'] = self.x.role
+        session['username'] = self.x.email
         session.save()
 
         r = self.client.post("/CreateOther/", {"fname": "Hallllley", "lname": "Kloss", "email": "thing@uwm.edu",
@@ -42,6 +43,7 @@ class CreateAccount(TestCase):
     def test_invalidAccount(self):
         session = self.client.session
         session['role'] = 'Instructor'
+        session['username'] = self.x.email
         session.save()
 
         r = self.client.post("/CreateOther/", {"fname": "Hallllley", "lname": "Kloss", "email": "thing",
@@ -52,6 +54,7 @@ class CreateAccount(TestCase):
     def test_validAccountTA(self):
         session = self.client.session
         session['role'] = 'TA'
+        session['username'] = self.x.email
         session.save()
 
         r = self.client.post("/CreateOther/", {"fname": "Hallllley", "lname": "Kloss", "email": "thing@uwm.edu",
@@ -61,6 +64,7 @@ class CreateAccount(TestCase):
     def test_invalidAccountTA(self):
         session = self.client.session
         session['role'] = 'TA'
+        session['username'] = self.x.email
         session.save()
 
         r = self.client.post("/CreateOther/", {"fname": "Hallllley", "lname": "Kloss", "email": "thing",
@@ -203,4 +207,36 @@ class PagePermissions(TestCase):
         r5 = self.client.get("/Home", {"account": self.s, "username": self.s.email}, follow=True)
         self.assertRedirects(r5, '/Denied/', status_code=301, target_status_code=200, fetch_redirect_response=True)
 
+
+class AssignTA(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.z = user(fname="Sam", lname="Brown", email="emailTwo@something.com", role="Instructor", password="jhfkdjsalfhadis", maxsection=0, remainingSection=0)
+        self.z.save()
+
+        self.u = user(fname="Joe", lname="Johnson", email="emailOne@password.com", role="TA",
+                      password="fdsahjk", maxsection=3, remainingSection=3)
+        self.u.save()
+        self.c=course(classname="CS361")
+        self.c.save()
+        self.s=section(number="101", course=self.c,)
+        self.s.save()
+
+    def test_SuccessfulAssignTA(self):
+        session = self.client.session
+        session['username'] = self.z.email
+        session['course'] = self.c.classname
+        session.save()
+
+        r=self.client.post("/AssignTA/",{"section":self.s.number, "ta":self.u.email}, follow=True)
+        self.assertEqual(r.context["successmsg"], "Successfully assigned a TA")
+
+    def test_UnsuccessfulAssignTA(self):
+        session = self.client.session
+        session['username'] = self.z.email
+        session['course'] = self.c.classname
+        session.save()
+
+        r=self.client.post("/AssignTA/",{"section":self.s.number, "ta":self.z.email}, follow=True)
+        self.assertEqual(r.context["badmsg"], "TA has no available sections")
 
