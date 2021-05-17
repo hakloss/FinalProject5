@@ -91,10 +91,19 @@ def instructorList():
 
 def maxSectionTally(taEmail):
     myuser=user.objects.get(email=taEmail)
+    allsections=section.objects.values()
+    count=0
+    for i in allsections:
+        if i.get("ta_id","default")==myuser.email:
+            count+=1
+    return count
+
+def deductSection(taEmail):
+    myuser = user.objects.get(email=taEmail)
     if myuser.remainingSection>0:
-        myuser.remainingSection-=1
-        myuser.save()
-        print(myuser.remainingSection)
+        myuser.remainingSection=maxSectionTally(taEmail)-1
+
+
 
 def myuser(request):
     return request.session["username"]
