@@ -30,7 +30,7 @@
     {% for i in allcour %}
         <tr>
             <td>{{ i.classname }}</td>
-            <td>{{ i.instructor }}</td>
+            <td>{{ i.instructor.fname }} {{ i.instructor.lname }} </td>
         </tr>
     {% endfor %}
     </tbody>
