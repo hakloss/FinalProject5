@@ -1,320 +1,244 @@
-from django.shortcuts import render, redirect, get_object_or_404
-from django.views import View
-
-from Scheduler import functions
-from Scheduler.functions import *
+from django.test import TestCase, Client
 from Scheduler.models import *
 
-# Create your views here.
-class CreateAccount(View):
-    def get(self, request):
-        if not checkAdminRole(request.session["username"]):
-            return redirect("/Denied")
-        return render(request, "CreateAccount.html", {"username": myuser(request)})
-
-    def post(self, request):
-        xrole = request.POST.get('role')
-        request.session['role'] = xrole
-        if xrole=="TA":
-            return redirect("/CreateTA", {"username": myuser(request)})
-        else:
-            return redirect("/CreateOther",{'role':xrole, "username": myuser(request)})
-
-class CreateTA(View):
-    def get(self, request):
-        if not checkAdminRole(request.session["username"]):
-            return redirect("/Denied")
-        return render(request, "CreateTA.html", {"username": myuser(request)})
-
-    def post(self, request):
-        xfname = request.POST.get('fname')
-        xlname = request.POST.get('lname')
-        xemail = request.POST.get('email')
-        xpassword = request.POST.get('password')
-        xmaxsection=request.POST.get('maxsection')
-        xskills=request.POST.get('skills')
-        xaddress = request.POST.get('address')
-        xcity = request.POST.get('city')
-        xstate = request.POST.get('state')
-        xzip = request.POST.get('zip')
-        xpphone = request.POST.get('pphone')
-        xwphone = request.POST.get('wphone')
-        xremainingSection=request.POST.get('maxsection')
-
-        if not functions.validateEmail(xemail):
-            return render(request, "CreateTA.html", {"badmsg": "Please enter a valid email", "username": myuser(request)})
-        if functions.duplicateUserCheck(xemail):
-            return render(request, "CreateTA.html", {"badmsg": "An account for this email already exists", "username": myuser(request)})
-
-        account = user(fname=xfname, lname=xlname, email=xemail, password=xpassword, role="TA", maxsection=xmaxsection, skills=xskills,
-                       address=xaddress, city=xcity, state=xstate, zip=xzip, pphone=xpphone, wphone=xwphone, remainingSection=xremainingSection)
-        account.save()
-
-        return render(request, "CreateTA.html", {"successmsg":"Account has been created","username": myuser(request)})
-
-
-class CreateOther(View):
-    def get(self, request):
-        if not checkAdminRole(request.session["username"]):
-            return redirect("/Denied")
-        role=request.session['role']
-        return render(request, "CreateOther.html", {"username": myuser(request)})
-
-    def post(self, request):
-        xfname = request.POST.get('fname')
-        xlname = request.POST.get('lname')
-        xemail = request.POST.get('email')
-        xpassword = request.POST.get('password')
-        xaddress = request.POST.get('address')
-        xcity = request.POST.get('city')
-        xstate = request.POST.get('state')
-        xzip = request.POST.get('zip')
-        xpphone = request.POST.get('pphone')
-        xwphone = request.POST.get('wphone')
-
-        xrole = request.session['role']
-
-        if not functions.validateEmail(xemail):
-            return render(request, "CreateOther.html", {"badmsg": "Please enter a valid email","username": myuser(request)})
-        if functions.duplicateUserCheck(xemail):
-            return render(request, "CreateOther.html", {"badmsg": "An account for this email already exists","username": myuser(request)})
-
-        account = user(fname=xfname, lname=xlname, email=xemail, password=xpassword, role=xrole,
-                       address=xaddress, city=xcity, state=xstate, zip=xzip, pphone=xpphone, wphone=xwphone)
-        account.save()
-        return render(request, "CreateOther.html", {"successmsg":"Account has been created", "username": myuser(request)})
-
-
-
-class Home(View):
-    def get(self, request):
-
-        acc=getAccount(request)
-        if acc.role == "admin" or acc.role == "Admin":
-            return redirect("/AdminHome",{"username": myuser(request)})
-        elif acc.role == "Instructor" or acc.role == "instructor":
-            return redirect("/InstructorHome",{"username": myuser(request)})
-        else:
-            return redirect("/TAHome",{"username": myuser(request)})
-
-    def post (self, request):
-        return redirect("/TAHome", {"username": myuser(request)})
-
-class AdminHome(View):
-    def get(self, request):
-        if not checkAdminRole(myuser(request)):
-            return redirect("/Denied")
-        return render(request, "AdminHome.html", {"username": myuser(request)})
-
-    def post(self, request):
-        return render(request, "AdminHome.html", {"username": myuser(request)})
-
-class InstructorHome(View):
-    def get(self, request):
-        if not checkInstructorRole(myuser(request)):
-            return redirect("/Denied")
-        return render(request, "InstructorHome.html",{"username": myuser(request)})
-    def post(self, request):
-        return render(request, "InstructorHome.html", {"username": myuser(request)})
-
-class TAHome(View):
-    def get(self, request):
-        if not checkTARole(myuser(request)):
-            return redirect("/Denied")
-        return render(request, "TAHome.html",{"username": myuser(request)})
-    def post(self, request):
-        return render(request, "TAHome.html", {"username": myuser(request)})
-
-class Login(View):
-    def get(self, request):
-        return render(request, "Login.html")
-
-    def post(self, request):
-        try:
-            myuser = user.objects.get(email=request.POST["username"])
-            badPassword = (myuser.password != request.POST['password'])
-        except:
-            return render(request, "Login.html", {"badmsg": "Please enter valid login credentials"})
-        if badPassword:
-            return render(request, "Login.html", {"badmsg": "Please enter valid login credentials"})
-        else:
-            request.session["username"] = myuser.email
-            return redirect("/Home",{"username":myuser})
-
-
-class CreateCourse(View):
-    def get(self, request):
-        if not checkAdminRole(myuser(request)):
-            return redirect("/Denied")
-        return render(request, "CreateCourse.html",{"username": myuser(request)})
-
-    def post(self, request):
-        xclassname = request.POST.get('classname')
-        if functions.duplicateCourseCheck(xclassname):
-            return render(request, "CreateCourse.html", {"badmsg": "This course already exists", "username": myuser(request)})
-
-        xcourse = course(classname=xclassname)
-        xcourse.save()
-        return render(request, "CreateCourse.html", {"successmsg": "Course has been created", "username": myuser(request)})
-
-
-class AddSection(View):
-    def get(self, request):
-        if not checkAdminRole(myuser(request)):
-            return redirect("/Denied")
-
-        return render(request, "AddSection.html",{'courselist':courseList(), "username": myuser(request)})
-
-    def post(self, request):
-        myaccount = user.objects.get(email=myuser(request))
-        allcourses = (course.objects.values())
-
-        xcourse = request.POST.get('course')
-        xsectionnum = request.POST.get('number')
-        xsectiontime = request.POST.get('time')
-
-        if functions.duplicateSectionCheck(xsectionnum,xsectiontime,xcourse):
-            return render(request, "CreateCourse.html", {"badmsg": "This course already exists", "username": myuser(request), 'courselist':courseList()})
-        try:
-            xcourse = course.objects.get(classname=request.POST.get('classname'))
-            xsection = section(time=xsectiontime, number=xsectionnum, course=xcourse)
-            xsection.save()
-            return render(request, "AddSection.html", {"successmsg": "Section has been added","username": myuser(request), 'courselist':courseList()})
-        except:
-            return render(request, "AddSection.html", {"badmsg": "Section has not been added", "username": myuser(request), "account":myaccount, 'courselist':courseList()})
-
-class ViewAccounts(View):
-    def get(self, request, **kwargs):
-        if checkAdminRole(myuser(request)) == True or checkInstructorRole(myuser(request)) == True or checkTARole(
-                myuser(request)) == True:
-            if not request.session.get("username"):
-                return redirect("home")
-
-            myacc=user.objects.get(email=myuser(request))
-            allaccounts = user.objects.all()
 
-            try:
-                deluser = self.kwargs["username"]
-            except KeyError:
-                return render(request, "ViewAccounts.html", {"badmsg": "Account has not been deleted", 'obj': allaccounts,"username": myuser(request), "account":myacc})
-
-            user.objects.filter(email=deluser).delete()
-
-            return render(request, "ViewAccounts.html", {"successmsg": "Account has been deleted", 'obj': allaccounts,"username": myuser(request), "account":myacc})
-        else:
-            return redirect("/Denied")
-
-
-    def post(self, request):
-        myacc = user.objects.get(myuser(request))
-        delname = request.POST['name']
-        print(delname)
-
-        if delname == '':
-            allaccounts = user.objects.all()
-            return render(request, "ViewAccounts.html", {'name': allaccounts, "account":myacc, "username": myuser(request)})
-
-        allaccounts = user.objects.filter(delname_first=delname)
-        print(allaccounts)
-        return render(request, "ViewAccounts.html", {'name': allaccounts, "account":myacc, "username": myuser(request)})
-
-class AssignInstructor(View):
-    def get(self, request):
-
-        if not checkAdminRole(myuser(request)):
-            return redirect("/Denied")
-        return render(request, "AssignInstructor.html", {'courselist':courseList(), 'allinstructors': instructorList()})
-
-    def post(self, request):
-
-        if not checkAdminRole(myuser(request)):
-            return redirect("/Denied")
-
-        try:
-            classname = request.POST.get('classname')
-            coursename = course.objects.get(classname=classname)
-            lastname = getLastName(request.POST.get('instructor'))
-            instructor = user.objects.get(lname=lastname)
-
-            coursename.instructor = instructor
-            coursename.save()
-
-            return render(request, "AssignInstructor.html", {'courselist':courseList(), 'allinstructors': instructorList(),
-                                                             'successmsg': "Instructor was assigned to course"})
-
-        except:
-            return render(request, "AssignInstructor.html", {'courselist':courseList(), 'allinstructors': instructorList(),
-                                                             'badmsg': "Instructor was not assigned to course"})
-
-class SelectCourse(View):
-    def get(self, request):
-        if not checkInstructorRole(myuser(request)):
-            return redirect("/Denied")
-
-        return render(request, "SelectCourse.html",{"username": myuser(request), "courselist":courseList()})
-
-    def post(self, request):
-        if not checkInstructorRole(myuser(request)):
-            return redirect("/Denied")
-
-        xcourse = request.POST.get('classname')
-        request.session['course'] = xcourse
-
-        return redirect("/AssignTA", {"course": xcourse, "username": myuser(request)})
-
-
-class AssignTA(View):
-    def get(self, request):
-        if not checkInstructorRole(myuser(request)):
-            return redirect("/Denied")
-        xcourse = request.session['course']
-
-        return render(request, "AssignTA.html", {"username": myuser(request), "sectionlist":sectionList(xcourse), "talist":TAlist()})
-
-    def post(self, request):
-        if not checkInstructorRole(myuser(request)):
-            return redirect("/Denied")
-
-        xcourse = request.session['course']
-        xsectionnum = request.POST.get('section')
-        xta = request.POST.get('ta')
-
-        mysection = section.objects.get(number=xsectionnum)
-        mysection.ta=user.objects.get(email=xta)
-        mysection.save()
-
-        functions.maxSectionTally(xta)
-
-        if user.objects.get(email=xta).remainingSection==0:
-            return render(request, "AssignTA.html", {"badmsg": "TA has no available sections", "username": myuser(request), "sectionlist":sectionList(xcourse), "talist":TAlist()})
-        return render(request, "AssignTA.html", {"successmsg": "Successfully assigned a TA", "username": myuser(request),
-                                                 "sectionlist": sectionList(xcourse), "talist": TAlist()})
-
-
-class ViewAssignments(View):
-    def get(self, request):
-        if checkAdminRole(myuser(request))==True or checkInstructorRole(myuser(request))==True or checkTARole(myuser(request))==True:
-            allcourses=course.objects.all()
-            allsections=section.objects.all()
-            return render(request, "ViewAssignments.html",{"username": myuser(request), "allcour":allcourses, "allsect":allsections})
-        else:
-            return redirect("/Denied", {"username": myuser(request)})
-
-
-    def post(self, request):
-        return render(request, "ViewAssignments.html",{"username": myuser(request)})
-
-
-class EditAccount(View):
-    def get(self, request):
-        myuser = request.session["username"]
-        if checkAdminRole(myuser) == True or checkInstructorRole(myuser) == True or checkTARole(myuser) == True:
-            myuser = request.session["username"]
-            myaccount=user.objects.get(email=myuser)
-        else:
-            return redirect("/Denied", {"username": myuser})
-
-        return render(request, "EditAccount.html", {"username": myuser, "account":myaccount})
+class Login(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.x = user(fname="Haley", lname="K", email="test@email.com", password="password", role="admin",
+                      address="123 street",
+                      city="Milwaukee", state="WI", zip="55555", pphone="555-555-5555", wphone="555-555-5555")
+        self.x.save()
+
+    def test_validLogin(self):
+        r = self.client.post('/', {"username": self.x.email, "password": self.x.password}, follow=True)
+        self.assertEqual("/Home", r.redirect_chain[0][0])
+
+    def test_badPassword(self):
+        r = self.client.post('/', {"username": self.x.email, "password": "blah"}, follow=True)
+        self.assertEqual(r.context["badmsg"], "Please enter valid login credentials")
+
+    def test_badUsername(self):
+        r = self.client.post('/', {"username": "email", "password": self.x.password}, follow=True)
+        self.assertEqual(r.context["badmsg"], "Please enter valid login credentials")
+
+
+class CreateAccount(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.x = user(fname="Haley", lname="K", email="test@email.com", password="password", role="Admin", address="123 street",
+                      city="Milwaukee", state="WI", zip="55555", pphone="555-555-5555", wphone="555-555-5555")
+        self.x.save()
+
+    def test_validAccount(self):
+        session = self.client.session
+        session['role'] = self.x.role
+        session['username'] = self.x.email
+        session.save()
+
+        r = self.client.post("/CreateOther/", {"fname": "Hallllley", "lname": "Kloss", "email": "thing@uwm.edu",
+                                               "password": "password"}, follow=True)
+        self.assertEqual(r.context["successmsg"], "Account has been created")
+
+    def test_invalidAccount(self):
+        session = self.client.session
+        session['role'] = 'Instructor'
+        session['username'] = self.x.email
+        session.save()
+
+        r = self.client.post("/CreateOther/", {"fname": "Hallllley", "lname": "Kloss", "email": "thing",
+                                               "password": "password"}, follow=True)
+
+        self.assertEqual(r.context["badmsg"], "Please enter a valid email")
+
+    def test_validAccountTA(self):
+        session = self.client.session
+        session['role'] = 'TA'
+        session['username'] = self.x.email
+        session.save()
+
+        r = self.client.post("/CreateOther/", {"fname": "Hallllley", "lname": "Kloss", "email": "thing@uwm.edu",
+                                               "password": "password"}, follow=True)
+        self.assertEqual(r.context["successmsg"], "Account has been created")
+
+    def test_invalidAccountTA(self):
+        session = self.client.session
+        session['role'] = 'TA'
+        session['username'] = self.x.email
+        session.save()
+
+        r = self.client.post("/CreateOther/", {"fname": "Hallllley", "lname": "Kloss", "email": "thing",
+                                               "password": "password"}, follow=True)
+
+        self.assertEqual(r.context["badmsg"], "Please enter a valid email")
+
+
+
+class EditAccount(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.x = user(fname="Haley", lname="K", email="test@email.com", password="password", role="admin", address="123 street",
+                      city="Milwaukee", state="WI", zip="55555", pphone="555-555-5555", wphone="555-555-5555")
+        self.x.save()
+
+    def test_validEdit(self):
+        session = self.client.session
+        session['username'] = self.x.email
+        session.save()
+
+        r = self.client.post("/EditAccount/", {"fname": "Hallllley", "lname":"Kloss", "email":self.x.email, "password":self.x.password, "role":self.x.role}, follow=True)
+        self.assertEqual(r.context["successmsg"], "Account has been updated")
+        self.assertEqual(r.context["account"].fname, "Hallllley")
+        self.assertEqual(r.context["account"].lname, "Kloss")
+
+
+class HomeRedirect(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.x = user(fname="John", lname="Smith", email="email@email.com", role="admin", password="fdjhska;afds;hjk")
+        self.x.save()
+        self.y = user(fname="Joe", lname="Johnson", email="emailOne@password.com", role="Instructor",
+                      password="fdsahjk")
+        self.y.save()
+        self.z = user(fname="Sam", lname="Brown", email="emailTwo@something.com", role="TA", password="jhfkdjsalfhadis")
+        self.z.save()
+
+    def test_adminHome(self):
+        session = self.client.session
+        session['username'] = self.x.email
+        session.save()
+        r = self.client.post("/Home",{"account":self.x, "username":self.x.email}, follow=True)
+        self.assertRedirects(r, '/AdminHome/',status_code=301, target_status_code=200, fetch_redirect_response=True)
+
+    def test_instructorHome(self):
+        session = self.client.session
+        session['username'] = self.y.email
+        session.save()
+        r = self.client.get("/Home",{"account":self.y, "username":self.y.email}, follow=True)
+        self.assertRedirects(r, '/InstructorHome/',status_code=301, target_status_code=200, fetch_redirect_response=True)
+
+    def test_taHome(self):
+        session = self.client.session
+        session['username'] = self.z.email
+        session.save()
+        r = self.client.get("/Home",{"account":self.z, "username":self.z.email}, follow=True)
+        self.assertRedirects(r, '/TAHome/',status_code=301, target_status_code=200, fetch_redirect_response=True)
+
+class PagePermissions(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.y = user(fname="Joe", lname="Johnson", email="emailOne@password.com", role="Instructor",
+                      password="fdsahjk")
+        self.y.save()
+        self.z = user(fname="Sam", lname="Brown", email="emailTwo@something.com", role="TA", password="jhfkdjsalfhadis")
+        self.z.save()
+        self.s = user(email="strangerdanger@something.com")
+        self.s.save()
+
+    def test_TApermissions(self):
+        session = self.client.session
+        session['username'] = self.z.email
+        session.save()
+        r = self.client.get("/CreateAccount",{"account":self.z, "username":self.z.email}, follow=True)
+        self.assertRedirects(r, '/Denied/',status_code=301, target_status_code=200, fetch_redirect_response=True)
+
+        r2 = self.client.get("/AddSection", {"account": self.z, "username": self.z.email}, follow=True)
+        self.assertRedirects(r2, '/Denied/', status_code=301, target_status_code=200, fetch_redirect_response=True)
+
+        r3 = self.client.get("/AdminHome", {"account": self.z, "username": self.z.email}, follow=True)
+        self.assertRedirects(r3, '/Denied/', status_code=301, target_status_code=200, fetch_redirect_response=True)
+
+        r4 = self.client.get("/AssignTA", {"account": self.z, "username": self.z.email}, follow=True)
+        self.assertRedirects(r4, '/Denied/', status_code=301, target_status_code=200, fetch_redirect_response=True)
+
+        r5 = self.client.get("/CreateCourse", {"account": self.z, "username": self.z.email}, follow=True)
+        self.assertRedirects(r5, '/Denied/', status_code=301, target_status_code=200, fetch_redirect_response=True)
+
+        r6 = self.client.get("/CreateOther", {"account": self.z, "username": self.z.email}, follow=True)
+        self.assertRedirects(r6, '/Denied/', status_code=301, target_status_code=200, fetch_redirect_response=True)
+
+        r7 = self.client.get("/CreateTA", {"account": self.z, "username": self.z.email}, follow=True)
+        self.assertRedirects(r7, '/Denied/', status_code=301, target_status_code=200, fetch_redirect_response=True)
+
+        r8 = self.client.get("/InstructorHome", {"account": self.z, "username": self.z.email}, follow=True)
+        self.assertRedirects(r8, '/Denied/', status_code=301, target_status_code=200, fetch_redirect_response=True)
+
+        r9 = self.client.get("/SelectCourse", {"account": self.z, "username": self.z.email}, follow=True)
+        self.assertRedirects(r9, '/Denied/', status_code=301, target_status_code=200, fetch_redirect_response=True)
+
+    def test_Instructorpermissions(self):
+        session = self.client.session
+        session['username'] = self.y.email
+        session.save()
+        r = self.client.get("/CreateAccount",{"account":self.y, "username":self.y.email}, follow=True)
+        self.assertRedirects(r, '/Denied/',status_code=301, target_status_code=200, fetch_redirect_response=True)
+
+        r2 = self.client.get("/AddSection", {"account": self.y, "username": self.y.email}, follow=True)
+        self.assertRedirects(r2, '/Denied/', status_code=301, target_status_code=200, fetch_redirect_response=True)
+
+        r3 = self.client.get("/AdminHome", {"account": self.y, "username": self.y.email}, follow=True)
+        self.assertRedirects(r3, '/Denied/', status_code=301, target_status_code=200, fetch_redirect_response=True)
+
+        r5 = self.client.get("/CreateCourse", {"account": self.y, "username": self.y.email}, follow=True)
+        self.assertRedirects(r5, '/Denied/', status_code=301, target_status_code=200, fetch_redirect_response=True)
+
+        r6 = self.client.get("/CreateOther", {"account": self.y, "username": self.y.email}, follow=True)
+        self.assertRedirects(r6, '/Denied/', status_code=301, target_status_code=200, fetch_redirect_response=True)
+
+        r7 = self.client.get("/CreateTA", {"account": self.y, "username": self.y.email}, follow=True)
+        self.assertRedirects(r7, '/Denied/', status_code=301, target_status_code=200, fetch_redirect_response=True)
+
+        r8 = self.client.get("/TAHome", {"account": self.y, "username": self.y.email}, follow=True)
+        self.assertRedirects(r8, '/Denied/', status_code=301, target_status_code=200, fetch_redirect_response=True)
+
+    def test_StrangerPermissions(self):
+        session = self.client.session
+        session['username'] = self.s.email
+        session.save()
+        r = self.client.get("/ViewAccounts",{"account":self.s, "username":self.s.email}, follow=True)
+        self.assertRedirects(r, '/Denied/',status_code=301, target_status_code=200, fetch_redirect_response=True)
+
+        r2 = self.client.get("/ViewAssignments", {"account": self.s, "username": self.s.email}, follow=True)
+        self.assertRedirects(r2, '/Denied/', status_code=301, target_status_code=200, fetch_redirect_response=True)
+
+        r3 = self.client.get("/EditAccount", {"account": self.s, "username": self.s.email}, follow=True)
+        self.assertRedirects(r3, '/Denied/', status_code=301, target_status_code=200, fetch_redirect_response=True)
+
+        r5 = self.client.get("/Home", {"account": self.s, "username": self.s.email}, follow=True)
+        self.assertRedirects(r5, '/Denied/', status_code=301, target_status_code=200, fetch_redirect_response=True)
+
+
+class AssignTA(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.z = user(fname="Sam", lname="Brown", email="emailTwo@something.com", role="Instructor", password="jhfkdjsalfhadis", maxsection=0, remainingSection=0)
+        self.z.save()
+
+        self.u = user(fname="Joe", lname="Johnson", email="emailOne@password.com", role="TA",
+                      password="fdsahjk", maxsection=3, remainingSection=3)
+        self.u.save()
+        self.c=course(classname="CS361")
+        self.c.save()
+        self.s=section(number="101", course=self.c,)
+        self.s.save()
+
+    def test_SuccessfulAssignTA(self):
+        session = self.client.session
+        session['username'] = self.z.email
+        session['course'] = self.c.classname
+        session.save()
+
+        r=self.client.post("/AssignTA/",{"section":self.s.number, "ta":self.u.email}, follow=True)
+        self.assertEqual(r.context["successmsg"], "Successfully assigned a TA")
+
+    def test_UnsuccessfulAssignTA(self):
+        session = self.client.session
+        session['username'] = self.z.email
+        session['course'] = self.c.classname
+        session.save()
+
+        r=self.client.post("/AssignTA/",{"section":self.s.number, "ta":self.z.email}, follow=True)
+        self.assertEqual(r.context["badmsg"], "TA has no available sections")
 
     def post(self, request):
         myuser = request.session["username"]
