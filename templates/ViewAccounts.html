@@ -88,12 +88,10 @@
                 <td>{{ i.remainingSection}}</td>
                 <td><a href="{% url 'ViewAccounts' username=i.email %}">Delete</a></td>
             {% endif %}
-
-
-
         </tr>
         </form>
     {% endfor %}
+    <div class="successmsg">{{ successmsg }}</div>
     </tbody>
 
 </table>
