@@ -25,7 +25,7 @@ urlpatterns = [
     path('CreateAccount/', CreateAccount.as_view()),
     path('CreateCourse/', CreateCourse.as_view()),
     path('ViewAccounts/', ViewAccounts.as_view(), name="ViewAccounts"),
-    url(r'^ViewAccounts/(?P<username>[a-zA-Z0-9]+.*)', ViewAccounts.as_view(), kwargs=None, name="ViewAccounts"),
+    url(r'^ViewAccounts/(?P<deleteuser>[a-zA-Z0-9]+.*)', ViewAccounts.as_view(), kwargs=None, name="ViewAccounts"),
     path('AddSection/', AddSection.as_view()),
     path('AdminHome/', AdminHome.as_view()),
     path('InstructorHome/', InstructorHome.as_view()),

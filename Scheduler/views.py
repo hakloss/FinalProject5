@@ -194,7 +194,7 @@ class ViewAccounts(View):
             allaccounts = user.objects.all()
 
             try:
-                deluser = self.kwargs["username"]
+                deluser = self.kwargs["deleteuser"]
             except KeyError:
                 return render(request, "ViewAccounts.html", {"badmsg": "Account has not been deleted", 'obj': allaccounts,"username": myuser(request), "account":myacc})
 
@@ -230,21 +230,20 @@ class AssignInstructor(View):
         if not checkAdminRole(myuser(request)):
             return redirect("/Denied")
 
-        try:
-            classname = request.POST.get('classname')
-            coursename = course.objects.get(classname=classname)
-            lastname = getLastName(request.POST.get('instructor'))
-            instructor = user.objects.get(lname=lastname)
 
-            coursename.instructor = instructor
-            coursename.save()
+        classname = request.POST.get('classname')
+        coursename = course.objects.get(classname=classname)
+        ins=request.POST.get('instructor')
+        print(request.POST.get('instructor'))
+        instructor = user.objects.get(fname=ins)
 
-            return render(request, "AssignInstructor.html", {'courselist':courseList(), 'allinstructors': instructorList(),
+        coursename.instructor = instructor
+        coursename.save()
+
+        return render(request, "AssignInstructor.html", {'courselist':courseList(), 'allinstructors': instructorList(),
                                                              'successmsg': "Instructor was assigned to course"})
 
-        except:
-            return render(request, "AssignInstructor.html", {'courselist':courseList(), 'allinstructors': instructorList(),
-                                                             'badmsg': "Instructor was not assigned to course"})
+
 
 class SelectCourse(View):
     def get(self, request):

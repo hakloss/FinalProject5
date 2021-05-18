@@ -86,7 +86,7 @@
                 <td>{{ i.zip}}</td>
                 <td>{{ i.maxsection}}</td>
                 <td>{{ i.remainingSection}}</td>
-                <td><a href="{% url 'ViewAccounts' username=i.email %}">Delete</a></td>
+                <td><a href="{% url 'ViewAccounts' deleteuser=i.email %}">Delete</a></td>
             {% endif %}
 
 
