@@ -240,3 +240,22 @@ class AssignTA(TestCase):
         r=self.client.post("/AssignTA/",{"section":self.s.number, "ta":self.z.email}, follow=True)
         self.assertEqual(r.context["badmsg"], "TA has no available sections")
 
+class ViewDeleteAccounts(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.x = user(fname="Ed", lname="Minn", email="admin@email.com", role="admin", password="Admin1")
+        self.x.save()
+        self.y = user(fname="Ann", lname="Structor", email="instructor@email.com", role="Instructor",
+                      password="Instructor1")
+        self.y.save()
+#       self.z = user(fname="George", lname="Washington", email="george@aol.com", role="TA", password="TA1")
+#       self.z.save()
+
+    def test_delete_success(self):
+        session = self.client.session
+        session['username'] = self.x.email
+        session.save()
+
+        xuser = self.client.get("/ViewAccounts/", {"account": self.y}, follow=True)
+        r = self.client.post("/ViewAccounts/", {"account": xuser}, follow=True)
+        self.assertEqual(r.context["successmsg"], "Account has been deleted")
